@@ -1,0 +1,131 @@
+.ptk-cadastro-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.ptk-cadastro-fields {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Upload de imagem */
+.ptk-upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ptk-upload-box {
+  width: 96px;
+  height: 96px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+.ptk-upload-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ptk-upload-label {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ptk-upload input[type="file"] {
+  display: none;
+}
+
+/* Busca */
+.ptk-search {
+  position: relative;
+  max-width: 320px;
+  margin-bottom: 18px;
+}
+.ptk-search input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 11px 9px 34px;
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+.ptk-search input:focus {
+  border-color: var(--accent-2);
+}
+.ptk-search svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+
+/* Grade de cards */
+.ptk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.ptk-card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.ptk-card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--line);
+}
+.ptk-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ptk-card-body {
+  padding: 12px 14px 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ptk-card-codigo {
+  font-family: "Oswald", sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+.ptk-card-desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+  flex: 1;
+}
+.ptk-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 6px 6px 0;
+}
