@@ -1,0 +1,311 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
+
+:root {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #f4f2ec;
+  --line: #e2ddd1;
+  --accent: #d9822b;
+  --accent-2: #3f6b7a;
+  --text: #201e1a;
+  --muted: #756e5f;
+  --danger: #b23b2a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+}
+
+.ptk-wrap {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.ptk-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+}
+
+/* Header */
+.ptk-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.ptk-eyebrow {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--accent-2);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.ptk-title {
+  font-family: "Oswald", sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 34px;
+  line-height: 1.05;
+  margin: 0;
+}
+.ptk-sub {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 6px;
+}
+.ptk-daycard {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 16px;
+  text-align: right;
+}
+.ptk-daycard-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.ptk-daycard-date {
+  font-family: "Oswald", sans-serif;
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+/* Tabs */
+.ptk-tabs {
+  display: flex;
+  gap: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.ptk-tab {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.ptk-tab:hover {
+  color: var(--text);
+}
+.ptk-tab.active {
+  background: var(--accent);
+  color: #1c1b18;
+}
+
+/* Hero illustration */
+.ptk-hero {
+  background: linear-gradient(180deg, var(--panel) 0%, var(--bg) 100%);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 6px 8px 0 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.ptk-hero-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Panels */
+.ptk-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.ptk-panel:last-child {
+  margin-bottom: 0;
+}
+.ptk-panel-title {
+  font-family: "Oswald", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 15px;
+  color: var(--text);
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Form fields */
+.ptk-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 14px;
+}
+.ptk-form-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 18px;
+}
+.ptk-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+  display: block;
+}
+.ptk-input,
+.ptk-textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 11px;
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.ptk-textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+.ptk-input:focus,
+.ptk-textarea:focus {
+  border-color: var(--accent-2);
+}
+.ptk-btn {
+  background: var(--accent);
+  color: #1c1b18;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: filter 0.15s ease;
+}
+.ptk-btn:hover {
+  filter: brightness(1.08);
+}
+.ptk-btn:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+.ptk-error {
+  color: var(--danger);
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+/* Tables */
+.ptk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.ptk-table th {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.ptk-table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.ptk-table tr:last-child td {
+  border-bottom: none;
+}
+.ptk-mono {
+  font-family: "IBM Plex Mono", monospace;
+}
+.ptk-remove {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.ptk-remove:hover {
+  color: var(--danger);
+  background: rgba(193, 84, 63, 0.12);
+}
+.ptk-empty {
+  color: var(--muted);
+  font-size: 13px;
+  padding: 24px 4px;
+  text-align: center;
+}
+.ptk-warn {
+  color: var(--accent-2);
+  font-size: 11px;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+/* Stats */
+.ptk-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.ptk-stat {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+}
+.ptk-stat-label {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ptk-stat-value {
+  font-family: "Oswald", sans-serif;
+  font-size: 32px;
+  margin-top: 4px;
+  color: var(--accent);
+}
