@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Layers, Plus } from "lucide-react";
 import { BarPegs } from "../common/BarPegs";
-import { FUROS_POR_BARRA, TOTAL_BARRAS } from "../../constants";
+import { TOTAL_BARRAS } from "../../constants";
 import { buildBarraSequence } from "../../utils/barras";
 
-const EMPTY_FORM = { peca: "", lote: "", qtdPorBarra: "", barraInicial: "", barraFinal: "" };
+const EMPTY_FORM = { peca: "", lote: "", qtdPorBarra: "", barraInicial: "", barraFinal: "", qtdUltimaBarra: "" };
 
 export function NovoLancamentoForm({ onAdd }) {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -19,7 +19,14 @@ export function NovoLancamentoForm({ onAdd }) {
   const bi = parseInt(form.barraInicial, 10);
   const bf = parseInt(form.barraFinal, 10);
   const previewBarras = buildBarraSequence(bi, bf).length;
-  const previewTotal = !isNaN(qtd) && previewBarras > 0 ? qtd * previewBarras : 0;
+  const temUltimaParcial = form.qtdUltimaBarra !== "";
+  const qtdUltima = temUltimaParcial ? parseInt(form.qtdUltimaBarra, 10) : null;
+  const previewTotal =
+    !isNaN(qtd) && previewBarras > 0
+      ? temUltimaParcial && !isNaN(qtdUltima)
+        ? qtd * (previewBarras - 1) + qtdUltima
+        : qtd * previewBarras
+      : 0;
 
   function handleAdd() {
     const result = onAdd(form);
@@ -61,10 +68,9 @@ export function NovoLancamentoForm({ onAdd }) {
             className="ptk-input"
             type="number"
             min="1"
-            max={FUROS_POR_BARRA}
             value={form.qtdPorBarra}
             onChange={(e) => updateField("qtdPorBarra", e.target.value)}
-            placeholder="1–10"
+            placeholder="Ex: 8"
           />
         </div>
         <div>
@@ -89,6 +95,18 @@ export function NovoLancamentoForm({ onAdd }) {
             value={form.barraFinal}
             onChange={(e) => updateField("barraFinal", e.target.value)}
             placeholder="1–50"
+          />
+        </div>
+        <div>
+          <label className="ptk-label">Última barra não fechou? (opcional)</label>
+          <input
+            className="ptk-input"
+            type="number"
+            min="0"
+            max={!isNaN(qtd) ? qtd : undefined}
+            value={form.qtdUltimaBarra}
+            onChange={(e) => updateField("qtdUltimaBarra", e.target.value)}
+            placeholder="Qtd real na última"
           />
         </div>
       </div>
