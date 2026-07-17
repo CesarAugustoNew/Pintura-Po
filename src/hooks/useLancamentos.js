@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { FUROS_POR_BARRA, TOTAL_BARRAS } from "../constants";
-import { buildBarraSequence } from "../utils/barras";
+import { validarECalcularLancamento } from "../utils/validarLancamento";
 
 /**
  * Centraliza o estado e as regras de negócio dos lançamentos de barras:
@@ -9,40 +8,20 @@ import { buildBarraSequence } from "../utils/barras";
 export function useLancamentos() {
   const [entries, setEntries] = useState([]);
 
-  function addEntry({ peca, lote, qtdPorBarra, barraInicial, barraFinal }) {
-    const qtd = parseInt(qtdPorBarra, 10);
-    const bi = parseInt(barraInicial, 10);
-    const bf = parseInt(barraFinal, 10);
+  function addEntry(form) {
+    const result = validarECalcularLancamento(form, entries);
+    if (!result.ok) return result;
 
-    if (!peca.trim()) return { ok: false, error: "Informe o número/modelo da peça." };
-    if (!lote.trim()) return { ok: false, error: "Informe o lote." };
-    if (isNaN(qtd) || qtd < 1 || qtd > FUROS_POR_BARRA)
-      return { ok: false, error: `Quantidade por barra deve ser de 1 a ${FUROS_POR_BARRA}.` };
-    if (isNaN(bi) || isNaN(bf)) return { ok: false, error: "Informe a barra inicial e final." };
-    if (bi < 1 || bi > TOTAL_BARRAS || bf < 1 || bf > TOTAL_BARRAS)
-      return { ok: false, error: `A numeração da barra deve ser de 1 a ${TOTAL_BARRAS}.` };
+    setEntries((prev) => [...prev, { id: Date.now(), ...result.data }]);
+    return { ok: true };
+  }
 
-    const barraSequence = buildBarraSequence(bi, bf);
-    const barrasUsadas = barraSequence.length;
+  function updateEntry(id, form) {
+    const outros = entries.filter((e) => e.id !== id);
+    const result = validarECalcularLancamento(form, outros);
+    if (!result.ok) return result;
 
-    const overlapWarning = entries.some((e) => e.barraSequence.some((n) => barraSequence.includes(n)));
-
-    setEntries((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        peca: peca.trim(),
-        lote: lote.trim(),
-        qtdPorBarra: qtd,
-        barraInicial: bi,
-        barraFinal: bf,
-        barraSequence,
-        barrasUsadas,
-        totalPecas: qtd * barrasUsadas,
-        overlapWarning,
-      },
-    ]);
-
+    setEntries((prev) => prev.map((e) => (e.id === id ? { id, ...result.data } : e)));
     return { ok: true };
   }
 
@@ -65,5 +44,5 @@ export function useLancamentos() {
     return Array.from(map.values()).sort((a, b) => b.totalPecas - a.totalPecas);
   }, [entries]);
 
-  return { entries, addEntry, removeEntry, totalPecasDia, totalBarrasDia, porModelo };
+  return { entries, addEntry, updateEntry, removeEntry, totalPecasDia, totalBarrasDia, porModelo };
 }
