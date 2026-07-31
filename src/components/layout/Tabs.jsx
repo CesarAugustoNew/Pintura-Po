@@ -1,7 +1,8 @@
-import { BookOpen, PaintBucket } from "lucide-react";
+import { BookOpen, Layers3, PaintBucket } from "lucide-react";
 
 const TABS = [
   { id: "lancamentos", label: "Lançamentos", icon: PaintBucket },
+  { id: "sobras", label: "Sobras", icon: Layers3 },
   { id: "catalogo", label: "Cadastro de peças", icon: BookOpen },
 ];
 
