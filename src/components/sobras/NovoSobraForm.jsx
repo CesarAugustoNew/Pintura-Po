@@ -27,7 +27,7 @@ export function NovoSobraForm({ onAdd }) {
         <PackagePlus size={16} color="var(--accent-2)" /> Registrar sobra
       </h2>
       <p className="ptk-sub" style={{ marginTop: "-6px", marginBottom: "16px" }}>
-        Anote aqui as peças que sobraram (não fecharam barra, ficaram de lote anterior, etc.).
+        Anote aqui as peças que sobraram.
       </p>
 
       <div className="ptk-form-grid">
@@ -66,7 +66,7 @@ export function NovoSobraForm({ onAdd }) {
             className="ptk-textarea"
             value={form.observacao}
             onChange={(e) => updateField("observacao", e.target.value)}
-            placeholder="Ex: sobrou da barra 12, guardada na prateleira..."
+            placeholder="Ex: sobrou da peça, guardada na prateleira..."
           />
         </div>
       </div>
