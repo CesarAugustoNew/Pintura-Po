@@ -1,10 +1,7 @@
-import { useCatalogoPecas } from "../../hooks/useCatalogoPecas";
 import { CadastrarPecaForm } from "./CadastrarPecaForm";
 import { PecasGrid } from "./PecasGrid";
 
-export function CatalogoTab() {
-  const { pecas, pecasFiltradas, busca, setBusca, addPeca, removePeca } = useCatalogoPecas();
-
+export function CatalogoTab({ pecas, pecasFiltradas, busca, setBusca, addPeca, removePeca }) {
   return (
     <>
       <CadastrarPecaForm onAdd={addPeca} />

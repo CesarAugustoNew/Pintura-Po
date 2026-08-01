@@ -1,12 +1,17 @@
 import { HeroBar } from "../common/HeroBar";
-import { useLancamentos } from "../../hooks/useLancamentos";
 import { NovoLancamentoForm } from "./NovoLancamentoForm";
 import { LancamentosTable } from "./LancamentosTable";
 import { ResumoDia } from "./ResumoDia";
 
-export function LancamentosTab() {
-  const { entries, addEntry, updateEntry, removeEntry, totalPecasDia, totalBarrasDia, porModelo } = useLancamentos();
-
+export function LancamentosTab({
+  entries,
+  addEntry,
+  updateEntry,
+  removeEntry,
+  totalPecasDia,
+  totalBarrasDia,
+  porModelo,
+}) {
   return (
     <>
       <div className="ptk-hero">
