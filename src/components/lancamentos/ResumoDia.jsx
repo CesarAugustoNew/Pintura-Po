@@ -1,7 +1,36 @@
-export function ResumoDia({ totalPecasDia, totalBarrasDia, porModelo }) {
+import { FileSpreadsheet } from "lucide-react";
+import { exportarLancamentosExcel } from "../../utils/exportExcel";
+
+export function ResumoDia({ entries, totalPecasDia, totalBarrasDia, porModelo }) {
+  function handleExport() {
+    exportarLancamentosExcel({
+      entries,
+      totalPecasDia,
+      totalBarrasDia,
+      porModelo,
+      today: new Date(),
+    });
+  }
+
   return (
     <div className="ptk-panel">
-      <h2 className="ptk-panel-title">Resumo do dia</h2>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "10px",
+          marginBottom: "16px",
+        }}
+      >
+        <h2 className="ptk-panel-title" style={{ margin: 0 }}>
+          Resumo do dia
+        </h2>
+        <button className="ptk-btn" onClick={handleExport}>
+          <FileSpreadsheet size={16} /> Exportar Excel
+        </button>
+      </div>
 
       <div className="ptk-stats-grid">
         <div className="ptk-stat">
