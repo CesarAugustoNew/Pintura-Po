@@ -22,7 +22,7 @@ export function LancamentosTab({
 
       <NovoLancamentoForm onAdd={addEntry} />
       <LancamentosTable entries={entries} onUpdate={updateEntry} onRemove={removeEntry} />
-      <ResumoDia totalPecasDia={totalPecasDia} totalBarrasDia={totalBarrasDia} porModelo={porModelo} />
+      <ResumoDia entries={entries} totalPecasDia={totalPecasDia} totalBarrasDia={totalBarrasDia} porModelo={porModelo} />
       <EmbalagemPanel codigos={entries.map((e) => e.peca)} catalogoPecas={catalogoPecas} />
     </>
   );
