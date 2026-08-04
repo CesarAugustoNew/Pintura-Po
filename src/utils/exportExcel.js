@@ -17,7 +17,6 @@ export function exportarLancamentosExcel({ entries, totalPecasDia, totalBarrasDi
     "Barra inicial",
     "Barra final",
     "Barras usadas",
-    "Última barra",
     "Total de peças",
   ];
   const lancamentosRows = entries.map((e) => [
@@ -28,7 +27,6 @@ export function exportarLancamentosExcel({ entries, totalPecasDia, totalBarrasDi
     e.barraInicial,
     e.barraFinal,
     e.barrasUsadas,
-    e.qtdUltimaBarra !== null ? e.qtdUltimaBarra : "cheia",
     e.totalPecas,
   ]);
   const wsLancamentos = XLSX.utils.aoa_to_sheet([lancamentosHeader, ...lancamentosRows]);
