@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Check, PaintBucket, Pencil, Trash2, X } from "lucide-react";
-import { BarPegs } from "../common/BarPegs";
 import { buildBarraSequence } from "../../utils/barras";
 
 function toEditForm(entry) {
@@ -77,7 +76,6 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                 <th>Barras</th>
                 <th>Última barra</th>
                 <th>Total peças</th>
-                <th>Ocupação</th>
                 <th></th>
               </tr>
             </thead>
@@ -149,16 +147,6 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                         {total !== null ? total : "—"}
                       </td>
                       <td>
-                        <BarPegs
-                          filled={
-                            editForm.qtdUltimaBarra !== ""
-                              ? parseInt(editForm.qtdUltimaBarra, 10) || 0
-                              : parseInt(editForm.qtdPorBarra, 10) || 0
-                          }
-                          size="sm"
-                        />
-                      </td>
-                      <td>
                         <div style={{ display: "flex", gap: "4px" }}>
                           <button className="ptk-remove" onClick={() => saveEdit(e.id)} aria-label="Salvar edição">
                             <Check size={15} color="var(--accent-2)" />
@@ -186,9 +174,6 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                       {e.qtdUltimaBarra !== null ? e.qtdUltimaBarra : "cheia"}
                     </td>
                     <td className="ptk-mono" style={{ color: "var(--accent)" }}>{e.totalPecas}</td>
-                    <td>
-                      <BarPegs filled={e.qtdUltimaBarra !== null ? e.qtdUltimaBarra : e.qtdPorBarra} size="sm" />
-                    </td>
                     <td>
                       <div style={{ display: "flex", gap: "4px" }}>
                         <button className="ptk-remove" onClick={() => startEdit(e)} aria-label="Editar lançamento">

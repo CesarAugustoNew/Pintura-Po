@@ -8,13 +8,22 @@ export function useCatalogoPecas() {
   const [pecas, setPecas] = useState([]);
   const [busca, setBusca] = useState("");
 
-  function addPeca({ codigo, descricao, imagem }) {
+  function addPeca({ codigo, descricao, imagem, caixa, qtdPorCaixa }) {
     if (!codigo.trim()) return { ok: false, error: "Informe o número/código da peça." };
     if (!descricao.trim())
       return { ok: false, error: "Escreva uma descrição para ajudar quem for consultar." };
 
+    const qtd = parseInt(qtdPorCaixa, 10);
+
     setPecas((prev) => [
-      { id: Date.now(), codigo: codigo.trim(), descricao: descricao.trim(), imagem: imagem || null },
+      {
+        id: Date.now(),
+        codigo: codigo.trim(),
+        descricao: descricao.trim(),
+        imagem: imagem || null,
+        caixa: (caixa || "").trim(),
+        qtdPorCaixa: !isNaN(qtd) && qtd > 0 ? qtd : null,
+      },
       ...prev,
     ]);
 

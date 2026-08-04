@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ImagePlus, Plus } from "lucide-react";
+import { ImagePlus, Package, Plus } from "lucide-react";
 
-const EMPTY_FORM = { codigo: "", descricao: "", imagem: null };
+const EMPTY_FORM = { codigo: "", descricao: "", imagem: null, caixa: "", qtdPorCaixa: "" };
 
 export function CadastrarPecaForm({ onAdd }) {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -75,6 +75,37 @@ export function CadastrarPecaForm({ onAdd }) {
               value={form.descricao}
               onChange={(e) => updateField("descricao", e.target.value)}
               placeholder="Como identificar a peça, onde é usada, detalhes que ajudam quem nunca viu..."
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="ptk-embalagem-section">
+        <h3 className="ptk-embalagem-title">
+          <Package size={14} color="var(--accent-2)" /> Embalagem
+        </h3>
+        <p className="ptk-sub" style={{ marginTop: "-4px", marginBottom: "12px" }}>
+          Defina em qual caixa e quantas peças por caixa essa peça deve ser embalada.
+        </p>
+        <div className="ptk-form-grid">
+          <div>
+            <label className="ptk-label">Caixa</label>
+            <input
+              className="ptk-input"
+              value={form.caixa}
+              onChange={(e) => updateField("caixa", e.target.value)}
+              placeholder="Ex: Caixa M-12"
+            />
+          </div>
+          <div>
+            <label className="ptk-label">Qtd por caixa</label>
+            <input
+              className="ptk-input"
+              type="number"
+              min="1"
+              value={form.qtdPorCaixa}
+              onChange={(e) => updateField("qtdPorCaixa", e.target.value)}
+              placeholder="Ex: 20"
             />
           </div>
         </div>
