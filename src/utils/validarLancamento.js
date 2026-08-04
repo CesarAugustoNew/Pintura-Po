@@ -5,11 +5,12 @@ import { buildBarraSequence } from "./barras";
  * Valida os campos de um lançamento e calcula barras usadas / total de peças.
  * Usado tanto ao adicionar um lançamento novo quanto ao editar um já existente.
  *
- * `outrosLancamentosDoDia` é usado só pra checar sobreposição de barras,
- * excluindo o próprio lançamento quando for uma edição.
+ * As barras giram em ciclo (1 até TOTAL_BARRAS e reinicia em 1), então é normal
+ * e esperado que o mesmo número de barra apareça em mais de um lançamento do dia
+ * — assim que a embalagem retira as peças, a barra volta a ficar disponível.
  */
 export function validarECalcularLancamento(
-  { peca, lote, qtdPorBarra, barraInicial, barraFinal, qtdUltimaBarra },
+  { peca, lote, qtdPorBarra, barraInicial, barraFinal, qtdUltimaBarra, horaInicio },
   outrosLancamentosDoDia
 ) {
   const qtd = parseInt(qtdPorBarra, 10);
@@ -30,9 +31,6 @@ export function validarECalcularLancamento(
   const barraSequence = buildBarraSequence(bi, bf);
   const barrasUsadas = barraSequence.length;
   const totalPecas = temUltimaParcial ? qtd * (barrasUsadas - 1) + qtdUltima : qtd * barrasUsadas;
-  const overlapWarning = outrosLancamentosDoDia.some((e) =>
-    e.barraSequence.some((n) => barraSequence.includes(n))
-  );
 
   return {
     ok: true,
@@ -46,7 +44,7 @@ export function validarECalcularLancamento(
       barraSequence,
       barrasUsadas,
       totalPecas,
-      overlapWarning,
+      horaInicio: (horaInicio || "").trim(),
     },
   };
 }

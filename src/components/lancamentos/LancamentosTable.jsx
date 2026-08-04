@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, PaintBucket, Pencil, Trash2, X } from "lucide-react";
 import { buildBarraSequence } from "../../utils/barras";
+import { TOTAL_BARRAS } from "../../constants";
 
 function toEditForm(entry) {
   return {
@@ -10,6 +11,7 @@ function toEditForm(entry) {
     barraInicial: String(entry.barraInicial),
     barraFinal: String(entry.barraFinal),
     qtdUltimaBarra: entry.qtdUltimaBarra === null ? "" : String(entry.qtdUltimaBarra),
+    horaInicio: entry.horaInicio || "",
   };
 }
 
@@ -72,6 +74,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
               <tr>
                 <th>Peça</th>
                 <th>Lote</th>
+                <th>Início</th>
                 <th>Qtd/barra</th>
                 <th>Barras</th>
                 <th>Última barra</th>
@@ -104,6 +107,15 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                       <td>
                         <input
                           className="ptk-input ptk-input-cell"
+                          type="time"
+                          style={{ width: "88px" }}
+                          value={editForm.horaInicio}
+                          onChange={(ev) => updateEditField("horaInicio", ev.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          className="ptk-input ptk-input-cell"
                           type="number"
                           min="1"
                           style={{ width: "64px" }}
@@ -116,7 +128,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                           className="ptk-input ptk-input-cell"
                           type="number"
                           min="1"
-                          max="50"
+                          max={TOTAL_BARRAS}
                           style={{ width: "56px" }}
                           value={editForm.barraInicial}
                           onChange={(ev) => updateEditField("barraInicial", ev.target.value)}
@@ -126,7 +138,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                           className="ptk-input ptk-input-cell"
                           type="number"
                           min="1"
-                          max="50"
+                          max={TOTAL_BARRAS}
                           style={{ width: "56px" }}
                           value={editForm.barraFinal}
                           onChange={(ev) => updateEditField("barraFinal", ev.target.value)}
@@ -165,10 +177,10 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                   <tr key={e.id}>
                     <td className="ptk-mono">{e.peca}</td>
                     <td className="ptk-mono">{e.lote}</td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{e.horaInicio || "—"}</td>
                     <td className="ptk-mono">{e.qtdPorBarra}</td>
                     <td className="ptk-mono">
                       {e.barraInicial}–{e.barraFinal} <span style={{ color: "var(--muted)" }}>({e.barrasUsadas})</span>
-                      {e.overlapWarning && <div className="ptk-warn">confere: barra repetida no dia</div>}
                     </td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>
                       {e.qtdUltimaBarra !== null ? e.qtdUltimaBarra : "cheia"}
