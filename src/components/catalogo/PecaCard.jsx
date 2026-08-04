@@ -1,4 +1,4 @@
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, Package, X } from "lucide-react";
 
 export function PecaCard({ peca, onRemove }) {
   return (
@@ -9,6 +9,13 @@ export function PecaCard({ peca, onRemove }) {
       <div className="ptk-card-body">
         <div className="ptk-card-codigo ptk-mono">{peca.codigo}</div>
         <div className="ptk-card-desc">{peca.descricao}</div>
+        {(peca.caixa || peca.qtdPorCaixa) && (
+          <div className="ptk-embalagem-badge">
+            <Package size={12} />
+            {peca.caixa || "Caixa não informada"}
+            {peca.qtdPorCaixa ? ` · ${peca.qtdPorCaixa}/caixa` : ""}
+          </div>
+        )}
       </div>
       <div className="ptk-card-footer">
         <button className="ptk-remove" onClick={() => onRemove(peca.id)} aria-label="Remover peça">

@@ -1,4 +1,5 @@
 import { HeroBar } from "../common/HeroBar";
+import { EmbalagemPanel } from "../common/EmbalagemPanel";
 import { NovoLancamentoForm } from "./NovoLancamentoForm";
 import { LancamentosTable } from "./LancamentosTable";
 import { ResumoDia } from "./ResumoDia";
@@ -11,6 +12,7 @@ export function LancamentosTab({
   totalPecasDia,
   totalBarrasDia,
   porModelo,
+  catalogoPecas,
 }) {
   return (
     <>
@@ -21,6 +23,7 @@ export function LancamentosTab({
       <NovoLancamentoForm onAdd={addEntry} />
       <LancamentosTable entries={entries} onUpdate={updateEntry} onRemove={removeEntry} />
       <ResumoDia totalPecasDia={totalPecasDia} totalBarrasDia={totalBarrasDia} porModelo={porModelo} />
+      <EmbalagemPanel codigos={entries.map((e) => e.peca)} catalogoPecas={catalogoPecas} />
     </>
   );
 }

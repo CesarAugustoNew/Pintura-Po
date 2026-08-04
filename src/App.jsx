@@ -28,10 +28,10 @@ export default function App() {
         <Tabs activeTab={activeTab} onChange={setActiveTab} />
 
         <div style={{ display: activeTab === "lancamentos" ? "contents" : "none" }}>
-          <LancamentosTab {...lancamentos} />
+          <LancamentosTab {...lancamentos} catalogoPecas={catalogo.pecas} />
         </div>
         <div style={{ display: activeTab === "sobras" ? "contents" : "none" }}>
-          <SobrasTab {...sobras} />
+          <SobrasTab {...sobras} catalogoPecas={catalogo.pecas} />
         </div>
         <div style={{ display: activeTab === "catalogo" ? "contents" : "none" }}>
           <CatalogoTab {...catalogo} />
