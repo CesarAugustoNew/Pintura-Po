@@ -4,9 +4,11 @@ import { Tabs } from "./components/layout/Tabs";
 import { LancamentosTab } from "./components/lancamentos/LancamentosTab";
 import { SobrasTab } from "./components/sobras/SobrasTab";
 import { CatalogoTab } from "./components/catalogo/CatalogoTab";
+import { ParadasTab } from "./components/paradas/ParadasTab";
 import { useLancamentos } from "./hooks/useLancamentos";
 import { useSobras } from "./hooks/useSobras";
 import { useCatalogoPecas } from "./hooks/useCatalogoPecas";
+import { useParadas } from "./hooks/useParadas";
 import "./styles/theme.css";
 import "./styles/catalogo.css";
 
@@ -20,6 +22,7 @@ export default function App() {
   const lancamentos = useLancamentos();
   const sobras = useSobras();
   const catalogo = useCatalogoPecas();
+  const paradas = useParadas();
 
   return (
     <div className="ptk-wrap">
@@ -35,6 +38,9 @@ export default function App() {
         </div>
         <div style={{ display: activeTab === "catalogo" ? "contents" : "none" }}>
           <CatalogoTab {...catalogo} />
+        </div>
+        <div style={{ display: activeTab === "paradas" ? "contents" : "none" }}>
+          <ParadasTab {...paradas} />
         </div>
       </div>
     </div>

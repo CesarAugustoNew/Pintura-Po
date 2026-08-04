@@ -4,7 +4,15 @@ import { BarPegs } from "../common/BarPegs";
 import { TOTAL_BARRAS } from "../../constants";
 import { buildBarraSequence } from "../../utils/barras";
 
-const EMPTY_FORM = { peca: "", lote: "", qtdPorBarra: "", barraInicial: "", barraFinal: "", qtdUltimaBarra: "" };
+const EMPTY_FORM = {
+  peca: "",
+  lote: "",
+  qtdPorBarra: "",
+  barraInicial: "",
+  barraFinal: "",
+  qtdUltimaBarra: "",
+  horaInicio: "",
+};
 
 export function NovoLancamentoForm({ onAdd }) {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -63,6 +71,15 @@ export function NovoLancamentoForm({ onAdd }) {
           />
         </div>
         <div>
+          <label className="ptk-label">Horário de início</label>
+          <input
+            className="ptk-input"
+            type="time"
+            value={form.horaInicio}
+            onChange={(e) => updateField("horaInicio", e.target.value)}
+          />
+        </div>
+        <div>
           <label className="ptk-label">Qtd por barra</label>
           <input
             className="ptk-input"
@@ -82,7 +99,7 @@ export function NovoLancamentoForm({ onAdd }) {
             max={TOTAL_BARRAS}
             value={form.barraInicial}
             onChange={(e) => updateField("barraInicial", e.target.value)}
-            placeholder="1–50"
+            placeholder="1–49"
           />
         </div>
         <div>
@@ -94,7 +111,7 @@ export function NovoLancamentoForm({ onAdd }) {
             max={TOTAL_BARRAS}
             value={form.barraFinal}
             onChange={(e) => updateField("barraFinal", e.target.value)}
-            placeholder="1–50"
+            placeholder="1–49"
           />
         </div>
         <div>
