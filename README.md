@@ -6,7 +6,6 @@ controlar sobras, cadastrar o catálogo de peças com a embalagem de cada uma
 (caixa e quantidade) e acompanhar paradas de produção — tudo em uma página só,
 sem precisar de backend.
 
-## Capturas de tela
 
 **Lançamentos** — topo da aba, com a foto da unidade Grupo Delga e o formulário de novo lançamento:
 
