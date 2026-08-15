@@ -52,7 +52,7 @@ export function ParadasTable({ paradas, onUpdate, onRemove }) {
       {paradas.length === 0 ? (
         <div className="ptk-empty">Nenhuma parada registrada ainda. Adicione a primeira acima.</div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
+        <div style={{ overflowX: "auto", maxWidth: "100%" }}>
           <table className="ptk-table">
             <thead>
               <tr>

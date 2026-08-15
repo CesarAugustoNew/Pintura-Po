@@ -23,7 +23,7 @@ export function EmbalagemPanel({ codigos, catalogoPecas }) {
           Assim que houver peças aqui, a embalagem cadastrada para cada uma aparece nesta lista.
         </div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
+        <div style={{ overflowX: "auto", maxWidth: "100%" }}>
           <table className="ptk-table">
             <thead>
               <tr>

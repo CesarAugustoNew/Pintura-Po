@@ -48,7 +48,7 @@ export function ResumoDia({ entries, totalPecasDia, totalBarrasDia, porModelo })
       </div>
 
       {porModelo.length > 0 && (
-        <div style={{ overflowX: "auto" }}>
+        <div style={{ overflowX: "auto", maxWidth: "100%" }}>
           <table className="ptk-table">
             <thead>
               <tr>
