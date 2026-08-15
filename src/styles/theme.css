@@ -320,6 +320,56 @@ svg {
   font-family: "IBM Plex Mono", monospace;
 }
 
+/* Priority toggle (Ordem de produção) */
+.ptk-priority-toggle {
+  display: flex;
+  gap: 6px;
+}
+.ptk-priority-btn {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  color: var(--muted);
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.ptk-priority-btn:hover {
+  border-color: var(--accent-2);
+}
+.ptk-priority-btn.active {
+  background: var(--panel-2);
+  color: var(--text);
+  border-color: var(--accent-2);
+}
+.ptk-priority-btn.is-priority.active {
+  background: var(--accent);
+  color: #1c1b18;
+  border-color: var(--accent);
+}
+.ptk-priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(217, 130, 43, 0.14);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 /* Stats */
 .ptk-stats-grid {
   display: grid;
