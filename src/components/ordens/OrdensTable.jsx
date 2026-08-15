@@ -1,22 +1,36 @@
 import { useState } from "react";
-import { Check, ClipboardList, Pencil, Star, Trash2, X } from "lucide-react";
+import { Check, ClipboardList, Pencil, RotateCcw, Send, Star, Trash2, X } from "lucide-react";
 import { formatDatePtBr } from "../../utils/date";
+import { getStatusOrdem, STATUS_LABELS } from "../../utils/ordens";
 
 function toEditForm(ordem) {
   return {
     peca: ordem.peca,
     lote: ordem.lote,
+    quantidade: ordem.quantidade,
     prioridade: ordem.prioridade,
     horarioSaida: ordem.horarioSaida,
   };
 }
 
-export function OrdensTable({ ordens, onUpdate, onRemove }) {
+function StatusBadge({ ordem }) {
+  const status = getStatusOrdem(ordem);
+  return (
+    <span className={`ptk-status-badge is-${status}`}>{STATUS_LABELS[status]}</span>
+  );
+}
+
+export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLimparEnvio }) {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
 
+  const [shippingId, setShippingId] = useState(null);
+  const [shippingValue, setShippingValue] = useState("");
+  const [shippingError, setShippingError] = useState("");
+
   function startEdit(ordem) {
+    cancelShipping();
     setEditingId(ordem.id);
     setEditForm(toEditForm(ordem));
     setEditError("");
@@ -42,6 +56,32 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
     cancelEdit();
   }
 
+  function startShipping(ordem) {
+    cancelEdit();
+    setShippingId(ordem.id);
+    setShippingValue(
+      ordem.quantidadeEnviada !== null && ordem.quantidadeEnviada !== undefined
+        ? String(ordem.quantidadeEnviada)
+        : String(ordem.quantidade)
+    );
+    setShippingError("");
+  }
+
+  function cancelShipping() {
+    setShippingId(null);
+    setShippingValue("");
+    setShippingError("");
+  }
+
+  function saveShipping(id) {
+    const result = onRegistrarEnvio(id, shippingValue);
+    if (!result.ok) {
+      setShippingError(result.error);
+      return;
+    }
+    cancelShipping();
+  }
+
   return (
     <div className="ptk-panel">
       <h2 className="ptk-panel-title">
@@ -58,6 +98,8 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                 <th></th>
                 <th>Peça</th>
                 <th>Lote</th>
+                <th>Meta</th>
+                <th>Envio</th>
                 <th>Saída</th>
                 <th>Registrada em</th>
                 <th></th>
@@ -66,6 +108,8 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
             <tbody>
               {ordens.map((o) => {
                 const isEditing = editingId === o.id;
+                const isShipping = shippingId === o.id;
+                const status = getStatusOrdem(o);
 
                 if (isEditing) {
                   return (
@@ -98,6 +142,19 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                           value={editForm.lote}
                           onChange={(ev) => updateEditField("lote", ev.target.value)}
                         />
+                      </td>
+                      <td>
+                        <input
+                          className="ptk-input ptk-input-cell"
+                          type="number"
+                          min="1"
+                          style={{ width: "80px" }}
+                          value={editForm.quantidade}
+                          onChange={(ev) => updateEditField("quantidade", ev.target.value)}
+                        />
+                      </td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>
+                        {o.quantidadeEnviada ?? "—"}
                       </td>
                       <td>
                         <input
@@ -136,6 +193,73 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                     </td>
                     <td className="ptk-mono">{o.peca}</td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{o.lote}</td>
+                    <td className="ptk-mono">{o.quantidade}</td>
+                    <td>
+                      {isShipping ? (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                          <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                            <input
+                              className="ptk-input ptk-input-cell"
+                              type="number"
+                              min="0"
+                              style={{ width: "80px" }}
+                              value={shippingValue}
+                              onChange={(ev) => {
+                                setShippingValue(ev.target.value);
+                                if (shippingError) setShippingError("");
+                              }}
+                              autoFocus
+                            />
+                            <button className="ptk-remove" onClick={() => saveShipping(o.id)} aria-label="Confirmar envio">
+                              <Check size={15} color="var(--accent-2)" />
+                            </button>
+                            <button className="ptk-remove" onClick={cancelShipping} aria-label="Cancelar registro de envio">
+                              <X size={15} />
+                            </button>
+                          </div>
+                          {shippingError && <div className="ptk-error">{shippingError}</div>}
+                        </div>
+                      ) : (
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                          <span className="ptk-mono" style={{ color: status === "pendente" ? "var(--muted)" : "var(--text)" }}>
+                            {o.quantidadeEnviada ?? "—"}/{o.quantidade}
+                          </span>
+                          <StatusBadge ordem={o} />
+                          {status === "pendente" ? (
+                            <button
+                              type="button"
+                              className="ptk-remove"
+                              onClick={() => startShipping(o)}
+                              aria-label="Registrar envio"
+                              title="Registrar envio"
+                            >
+                              <Send size={15} color="var(--accent-2)" />
+                            </button>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                className="ptk-remove"
+                                onClick={() => startShipping(o)}
+                                aria-label="Corrigir quantidade enviada"
+                                title="Corrigir quantidade enviada"
+                              >
+                                <Pencil size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                className="ptk-remove"
+                                onClick={() => onLimparEnvio(o.id)}
+                                aria-label="Desfazer registro de envio"
+                                title="Desfazer registro de envio"
+                              >
+                                <RotateCcw size={14} />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </td>
                     <td className="ptk-mono" style={{ color: o.horarioSaida ? "var(--text)" : "var(--muted)" }}>
                       {o.horarioSaida || "—"}
                     </td>

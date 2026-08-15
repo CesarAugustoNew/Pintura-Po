@@ -114,9 +114,14 @@ npm run preview
   automaticamente quantas barras foram usadas e o total de peças,
   inclusive quando a última barra não fecha (quantidade parcial).
 - **Ordem de Produção**: lista as peças e lotes que vão embora no dia,
-  com opção de marcar prioridade e, se quiser, o horário de saída. A
-  lista fica sempre ordenada com as prioridades no topo e, dentro de
-  cada grupo, pelo horário de saída.
+  com a quantidade combinada (meta), opção de marcar prioridade e, se
+  quiser, o horário de saída. A lista fica sempre ordenada com as
+  prioridades no topo e, dentro de cada grupo, pelo horário de saída.
+  Depois que a peça sai, dá pra registrar quanto foi realmente enviado —
+  se a quantidade enviada não bater a meta (ex: meta de 400, mas só
+  saíram 250), a ordem fica marcada como **Incompleto** em vez de
+  **Concluído**, com um botão para corrigir o valor ou desfazer o
+  registro a qualquer momento.
 - **Sobras**: controle separado para peças que sobraram sem virar
   lançamento.
 - **Cadastro de peças**: catálogo com foto, descrição e a embalagem de
@@ -148,10 +153,11 @@ src/
 │   ├── barras.js                 # sequência de barras usadas (ciclo 1–49)
 │   ├── validarLancamento.js      # validação e cálculo de um lançamento
 │   ├── paradas.js                # cálculo e formatação de duração das paradas
+│   ├── ordens.js                 # status de envio de uma ordem (pendente/completo/incompleto)
 │   └── exportExcel.js            # geração do .xlsx (lançamentos + resumo do dia)
 ├── hooks/
 │   ├── useLancamentos.js         # lógica de negócio dos lançamentos (validação, totais)
-│   ├── useOrdensProducao.js      # lógica de negócio da ordem de produção (prioridade, ordenação)
+│   ├── useOrdensProducao.js      # lógica de negócio da ordem de produção (prioridade, meta, envio, ordenação)
 │   ├── useSobras.js              # lógica de negócio das sobras
 │   ├── useCatalogoPecas.js       # cadastro/busca de peças + embalagem
 │   └── useParadas.js             # cadastro e cálculo de duração das paradas
@@ -170,9 +176,9 @@ src/
 │   │   └── ResumoDia.jsx             # totais, soma por modelo e botão "Exportar Excel"
 │   ├── ordens/
 │   │   ├── OrdensTab.jsx             # orquestra a aba (usa useOrdensProducao)
-│   │   ├── NovaOrdemForm.jsx         # formulário de nova ordem (peça, lote, prioridade, horário de saída)
-│   │   ├── OrdensTable.jsx           # lista da ordem do dia, prioridades no topo
-│   │   └── ResumoOrdens.jsx          # total de ordens e quantas são prioridade
+│   │   ├── NovaOrdemForm.jsx         # formulário de nova ordem (peça, lote, meta, prioridade, horário de saída)
+│   │   ├── OrdensTable.jsx           # lista da ordem do dia, registro de envio e status (pendente/completo/incompleto)
+│   │   └── ResumoOrdens.jsx          # totais de ordens, prioridades, meta e enviado
 │   ├── sobras/
 │   │   ├── SobrasTab.jsx             # orquestra a aba (usa useSobras)
 │   │   ├── NovoSobraForm.jsx         # formulário de nova sobra

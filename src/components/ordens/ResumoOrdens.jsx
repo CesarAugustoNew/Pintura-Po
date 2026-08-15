@@ -1,4 +1,9 @@
-export function ResumoOrdens({ totalOrdens, totalPrioridades }) {
+export function ResumoOrdens({
+  totalOrdens,
+  totalPrioridades,
+  totalMeta,
+  totalEnviado,
+}) {
   return (
     <div className="ptk-panel">
       <h2 className="ptk-panel-title">Resumo da ordem do dia</h2>
@@ -11,6 +16,14 @@ export function ResumoOrdens({ totalOrdens, totalPrioridades }) {
         <div className="ptk-stat">
           <div className="ptk-stat-label">Marcadas como prioridade</div>
           <div className="ptk-stat-value">{totalPrioridades}</div>
+        </div>
+        <div className="ptk-stat">
+          <div className="ptk-stat-label">Meta do dia (peças)</div>
+          <div className="ptk-stat-value">{totalMeta}</div>
+        </div>
+        <div className="ptk-stat">
+          <div className="ptk-stat-label">Enviado até agora</div>
+          <div className="ptk-stat-value">{totalEnviado}</div>
         </div>
       </div>
     </div>
