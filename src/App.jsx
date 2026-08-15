@@ -2,10 +2,12 @@ import { useMemo, useState } from "react";
 import { Header } from "./components/layout/Header";
 import { Tabs } from "./components/layout/Tabs";
 import { LancamentosTab } from "./components/lancamentos/LancamentosTab";
+import { OrdensTab } from "./components/ordens/OrdensTab";
 import { SobrasTab } from "./components/sobras/SobrasTab";
 import { CatalogoTab } from "./components/catalogo/CatalogoTab";
 import { ParadasTab } from "./components/paradas/ParadasTab";
 import { useLancamentos } from "./hooks/useLancamentos";
+import { useOrdensProducao } from "./hooks/useOrdensProducao";
 import { useSobras } from "./hooks/useSobras";
 import { useCatalogoPecas } from "./hooks/useCatalogoPecas";
 import { useParadas } from "./hooks/useParadas";
@@ -20,6 +22,7 @@ export default function App() {
   // desmontado. Assim os dados de cada aba sobrevivem quando o usuário
   // navega para outra aba e volta depois.
   const lancamentos = useLancamentos();
+  const ordens = useOrdensProducao();
   const sobras = useSobras();
   const catalogo = useCatalogoPecas();
   const paradas = useParadas();
@@ -32,6 +35,9 @@ export default function App() {
 
         <div style={{ display: activeTab === "lancamentos" ? "contents" : "none" }}>
           <LancamentosTab {...lancamentos} catalogoPecas={catalogo.pecas} />
+        </div>
+        <div style={{ display: activeTab === "ordens" ? "contents" : "none" }}>
+          <OrdensTab {...ordens} />
         </div>
         <div style={{ display: activeTab === "sobras" ? "contents" : "none" }}>
           <SobrasTab {...sobras} catalogoPecas={catalogo.pecas} />

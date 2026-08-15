@@ -1,0 +1,162 @@
+import { useState } from "react";
+import { Check, ClipboardList, Pencil, Star, Trash2, X } from "lucide-react";
+import { formatDatePtBr } from "../../utils/date";
+
+function toEditForm(ordem) {
+  return {
+    peca: ordem.peca,
+    lote: ordem.lote,
+    prioridade: ordem.prioridade,
+    horarioSaida: ordem.horarioSaida,
+  };
+}
+
+export function OrdensTable({ ordens, onUpdate, onRemove }) {
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [editError, setEditError] = useState("");
+
+  function startEdit(ordem) {
+    setEditingId(ordem.id);
+    setEditForm(toEditForm(ordem));
+    setEditError("");
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditForm(null);
+    setEditError("");
+  }
+
+  function updateEditField(field, value) {
+    setEditForm((f) => ({ ...f, [field]: value }));
+    if (editError) setEditError("");
+  }
+
+  function saveEdit(id) {
+    const result = onUpdate(id, editForm);
+    if (!result.ok) {
+      setEditError(result.error);
+      return;
+    }
+    cancelEdit();
+  }
+
+  return (
+    <div className="ptk-panel">
+      <h2 className="ptk-panel-title">
+        <ClipboardList size={16} color="var(--accent-2)" /> Ordem de produção de hoje
+      </h2>
+
+      {ordens.length === 0 ? (
+        <div className="ptk-empty">Nenhuma ordem registrada ainda. Adicione a primeira acima.</div>
+      ) : (
+        <div style={{ overflowX: "auto", maxWidth: "100%" }}>
+          <table className="ptk-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Peça</th>
+                <th>Lote</th>
+                <th>Saída</th>
+                <th>Registrada em</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {ordens.map((o) => {
+                const isEditing = editingId === o.id;
+
+                if (isEditing) {
+                  return (
+                    <tr key={o.id}>
+                      <td>
+                        <button
+                          type="button"
+                          className="ptk-remove"
+                          onClick={() => updateEditField("prioridade", !editForm.prioridade)}
+                          aria-label="Alternar prioridade"
+                          title="Alternar prioridade"
+                        >
+                          <Star
+                            size={16}
+                            color={editForm.prioridade ? "var(--accent)" : "var(--line)"}
+                            fill={editForm.prioridade ? "var(--accent)" : "none"}
+                          />
+                        </button>
+                      </td>
+                      <td>
+                        <input
+                          className="ptk-input ptk-input-cell"
+                          value={editForm.peca}
+                          onChange={(ev) => updateEditField("peca", ev.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          className="ptk-input ptk-input-cell"
+                          value={editForm.lote}
+                          onChange={(ev) => updateEditField("lote", ev.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          className="ptk-input ptk-input-cell"
+                          type="time"
+                          value={editForm.horarioSaida}
+                          onChange={(ev) => updateEditField("horarioSaida", ev.target.value)}
+                        />
+                      </td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>
+                        {formatDatePtBr(o.data)}
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          <button className="ptk-remove" onClick={() => saveEdit(o.id)} aria-label="Salvar edição">
+                            <Check size={15} color="var(--accent-2)" />
+                          </button>
+                          <button className="ptk-remove" onClick={cancelEdit} aria-label="Cancelar edição">
+                            <X size={15} />
+                          </button>
+                        </div>
+                        {editError && <div className="ptk-error" style={{ marginTop: "4px" }}>{editError}</div>}
+                      </td>
+                    </tr>
+                  );
+                }
+
+                return (
+                  <tr key={o.id}>
+                    <td>
+                      {o.prioridade && (
+                        <span className="ptk-priority-badge" title="Prioridade">
+                          <Star size={12} fill="currentColor" /> Prioridade
+                        </span>
+                      )}
+                    </td>
+                    <td className="ptk-mono">{o.peca}</td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{o.lote}</td>
+                    <td className="ptk-mono" style={{ color: o.horarioSaida ? "var(--text)" : "var(--muted)" }}>
+                      {o.horarioSaida || "—"}
+                    </td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDatePtBr(o.data)}</td>
+                    <td>
+                      <div style={{ display: "flex", gap: "4px" }}>
+                        <button className="ptk-remove" onClick={() => startEdit(o)} aria-label="Editar ordem">
+                          <Pencil size={15} />
+                        </button>
+                        <button className="ptk-remove" onClick={() => onRemove(o.id)} aria-label="Remover ordem">
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
