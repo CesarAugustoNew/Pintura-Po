@@ -68,7 +68,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
       {entries.length === 0 ? (
         <div className="ptk-empty">Nenhum lançamento ainda. Adicione o primeiro lote acima.</div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
+        <div style={{ overflowX: "auto", maxWidth: "100%" }}>
           <table className="ptk-table">
             <thead>
               <tr>
