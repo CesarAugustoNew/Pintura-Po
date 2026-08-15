@@ -113,6 +113,10 @@ npm run preview
   sozinho assim que a embalagem retira as peças da barra). Calcula
   automaticamente quantas barras foram usadas e o total de peças,
   inclusive quando a última barra não fecha (quantidade parcial).
+- **Ordem de Produção**: lista as peças e lotes que vão embora no dia,
+  com opção de marcar prioridade e, se quiser, o horário de saída. A
+  lista fica sempre ordenada com as prioridades no topo e, dentro de
+  cada grupo, pelo horário de saída.
 - **Sobras**: controle separado para peças que sobraram sem virar
   lançamento.
 - **Cadastro de peças**: catálogo com foto, descrição e a embalagem de
@@ -147,13 +151,14 @@ src/
 │   └── exportExcel.js            # geração do .xlsx (lançamentos + resumo do dia)
 ├── hooks/
 │   ├── useLancamentos.js         # lógica de negócio dos lançamentos (validação, totais)
+│   ├── useOrdensProducao.js      # lógica de negócio da ordem de produção (prioridade, ordenação)
 │   ├── useSobras.js              # lógica de negócio das sobras
 │   ├── useCatalogoPecas.js       # cadastro/busca de peças + embalagem
 │   └── useParadas.js             # cadastro e cálculo de duração das paradas
 ├── components/
 │   ├── layout/
 │   │   ├── Header.jsx            # título, "setor de pintura" e data do dia
-│   │   └── Tabs.jsx              # navegação entre Lançamentos, Sobras, Cadastro e Paradas
+│   │   └── Tabs.jsx              # navegação entre Lançamentos, Ordem de Produção, Sobras, Cadastro e Paradas
 │   ├── common/
 │   │   ├── BarPegs.jsx           # bolinhas que representam os furos ocupados
 │   │   ├── HeroBar.jsx           # imagem da unidade Grupo Delga no topo de Lançamentos
@@ -163,6 +168,11 @@ src/
 │   │   ├── NovoLancamentoForm.jsx    # formulário de novo lançamento (com horário de início)
 │   │   ├── LancamentosTable.jsx      # tabela dos lançamentos do dia
 │   │   └── ResumoDia.jsx             # totais, soma por modelo e botão "Exportar Excel"
+│   ├── ordens/
+│   │   ├── OrdensTab.jsx             # orquestra a aba (usa useOrdensProducao)
+│   │   ├── NovaOrdemForm.jsx         # formulário de nova ordem (peça, lote, prioridade, horário de saída)
+│   │   ├── OrdensTable.jsx           # lista da ordem do dia, prioridades no topo
+│   │   └── ResumoOrdens.jsx          # total de ordens e quantas são prioridade
 │   ├── sobras/
 │   │   ├── SobrasTab.jsx             # orquestra a aba (usa useSobras)
 │   │   ├── NovoSobraForm.jsx         # formulário de nova sobra
@@ -189,11 +199,12 @@ reaproveitar sem precisar mexer no visual.
 
 ## Sobre os dados
 
-Os dados (lançamentos, sobras, peças cadastradas e paradas) ficam apenas
-na memória do navegador — ao recarregar a página, tudo é perdido. Para
-persistir entre sessões, o próximo passo é conectar os hooks
-(`useLancamentos`, `useSobras`, `useCatalogoPecas` e `useParadas`) a uma
-API/banco de dados, sem precisar alterar os componentes visuais.
+Os dados (lançamentos, ordens de produção, sobras, peças cadastradas e
+paradas) ficam apenas na memória do navegador — ao recarregar a página,
+tudo é perdido. Para persistir entre sessões, o próximo passo é conectar
+os hooks (`useLancamentos`, `useOrdensProducao`, `useSobras`,
+`useCatalogoPecas` e `useParadas`) a uma API/banco de dados, sem precisar
+alterar os componentes visuais.
 
 ## Tecnologias
 

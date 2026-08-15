@@ -1,7 +1,8 @@
-import { BookOpen, Layers3, OctagonPause, PaintBucket } from "lucide-react";
+import { BookOpen, Layers3, OctagonPause, PaintBucket, Truck } from "lucide-react";
 
 const TABS = [
   { id: "lancamentos", label: "Lançamentos", icon: PaintBucket },
+  { id: "ordens", label: "Ordem de Produção", icon: Truck },
   { id: "sobras", label: "Sobras", icon: Layers3 },
   { id: "catalogo", label: "Cadastro de peças", icon: BookOpen },
   { id: "paradas", label: "Paradas", icon: OctagonPause },
