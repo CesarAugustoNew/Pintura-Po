@@ -10,6 +10,7 @@
   --text: #201e1a;
   --muted: #756e5f;
   --danger: #b23b2a;
+  --success: #4c7a45;
 }
 
 * {
@@ -368,6 +369,31 @@ svg {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+
+.ptk-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ptk-status-badge.is-pendente {
+  background: rgba(117, 110, 95, 0.14);
+  color: var(--muted);
+}
+.ptk-status-badge.is-completo {
+  background: rgba(76, 122, 69, 0.14);
+  color: var(--success);
+}
+.ptk-status-badge.is-incompleto {
+  background: rgba(178, 59, 42, 0.14);
+  color: var(--danger);
 }
 
 /* Stats */
