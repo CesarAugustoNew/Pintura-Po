@@ -30,8 +30,8 @@ export function useOrdensProducao() {
     setOrdens((prev) => [
       {
         id: Date.now(),
-        peca: peca.trim(),
-        lote: lote.trim(),
+        peca: peca.trim().toUpperCase(),
+        lote: lote.trim().toUpperCase(),
         quantidade: Number(quantidade),
         quantidadeEnviada: null,
         prioridade: !!prioridade,
@@ -53,8 +53,8 @@ export function useOrdensProducao() {
         o.id === id
           ? {
               ...o,
-              peca: peca.trim(),
-              lote: lote.trim(),
+              peca: peca.trim().toUpperCase(),
+              lote: lote.trim().toUpperCase(),
               quantidade: Number(quantidade),
               prioridade: !!prioridade,
               horarioSaida: horarioSaida || "",

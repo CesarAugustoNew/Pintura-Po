@@ -64,7 +64,7 @@ export function CadastrarPecaForm({ onAdd }) {
             <input
               className="ptk-input"
               value={form.codigo}
-              onChange={(e) => updateField("codigo", e.target.value)}
+              onChange={(e) => updateField("codigo", e.target.value.toUpperCase())}
               placeholder="Ex: PC-204"
             />
           </div>
