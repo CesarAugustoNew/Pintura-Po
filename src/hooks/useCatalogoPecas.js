@@ -18,7 +18,7 @@ export function useCatalogoPecas() {
     setPecas((prev) => [
       {
         id: Date.now(),
-        codigo: codigo.trim(),
+        codigo: codigo.trim().toUpperCase(),
         descricao: descricao.trim(),
         imagem: imagem || null,
         caixa: (caixa || "").trim(),

@@ -35,8 +35,8 @@ export function validarECalcularLancamento(
   return {
     ok: true,
     data: {
-      peca: peca.trim(),
-      lote: lote.trim(),
+      peca: peca.trim().toUpperCase(),
+      lote: lote.trim().toUpperCase(),
       qtdPorBarra: qtd,
       qtdUltimaBarra: temUltimaParcial ? qtdUltima : null,
       barraInicial: bi,
