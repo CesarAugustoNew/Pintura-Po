@@ -8,10 +8,8 @@ export function useCatalogoPecas() {
   const [pecas, setPecas] = useState([]);
   const [busca, setBusca] = useState("");
 
-  function addPeca({ codigo, descricao, imagem, caixa, qtdPorCaixa }) {
+  function addPeca({ codigo, descricao, imagens, caixa, qtdPorCaixa }) {
     if (!codigo.trim()) return { ok: false, error: "Informe o número/código da peça." };
-    if (!descricao.trim())
-      return { ok: false, error: "Escreva uma descrição para ajudar quem for consultar." };
 
     const qtd = parseInt(qtdPorCaixa, 10);
 
@@ -19,8 +17,8 @@ export function useCatalogoPecas() {
       {
         id: Date.now(),
         codigo: codigo.trim().toUpperCase(),
-        descricao: descricao.trim(),
-        imagem: imagem || null,
+        descricao: (descricao || "").trim(),
+        imagens: Array.isArray(imagens) ? imagens.filter(Boolean) : [],
         caixa: (caixa || "").trim(),
         qtdPorCaixa: !isNaN(qtd) && qtd > 0 ? qtd : null,
       },

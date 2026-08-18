@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ImagePlus, Package, Plus } from "lucide-react";
+import { ImagePlus, Package, Plus, X } from "lucide-react";
 
-const EMPTY_FORM = { codigo: "", descricao: "", imagem: null, caixa: "", qtdPorCaixa: "" };
+const EMPTY_FORM = { codigo: "", descricao: "", imagens: [], caixa: "", qtdPorCaixa: "" };
 
 export function CadastrarPecaForm({ onAdd }) {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -12,16 +12,30 @@ export function CadastrarPecaForm({ onAdd }) {
     if (error) setError("");
   }
 
-  function handleImageChange(e) {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      setError("Selecione um arquivo de imagem.");
+  function handleImagesChange(e) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const invalido = files.find((file) => !file.type.startsWith("image/"));
+    if (invalido) {
+      setError("Selecione apenas arquivos de imagem.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => updateField("imagem", reader.result);
-    reader.readAsDataURL(file);
+
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setForm((f) => ({ ...f, imagens: [...f.imagens, reader.result] }));
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Permite selecionar o mesmo arquivo de novo depois de removê-lo.
+    e.target.value = "";
+  }
+
+  function removeImagem(index) {
+    setForm((f) => ({ ...f, imagens: f.imagens.filter((_, i) => i !== index) }));
   }
 
   function handleAdd() {
@@ -39,23 +53,35 @@ export function CadastrarPecaForm({ onAdd }) {
         <ImagePlus size={16} color="var(--accent-2)" /> Cadastrar peça
       </h2>
       <p className="ptk-sub" style={{ marginTop: "-6px", marginBottom: "16px" }}>
-        Adicione foto e descrição para ajudar novos funcionários a identificar a peça.
+        Adicione uma ou mais fotos e uma descrição para ajudar novos funcionários a identificar a peça.
       </p>
 
       <div className="ptk-cadastro-grid">
         <div className="ptk-upload">
-          <div className="ptk-upload-box">
-            {form.imagem ? (
-              <img src={form.imagem} alt="Pré-visualização da peça" />
-            ) : (
-              <ImagePlus size={22} color="var(--line)" />
-            )}
+          <div className="ptk-upload-thumbs">
+            {form.imagens.map((src, i) => (
+              <div className="ptk-upload-box" key={i}>
+                <img src={src} alt={`Foto ${i + 1} da peça`} />
+                <button
+                  type="button"
+                  className="ptk-upload-thumb-remove"
+                  onClick={() => removeImagem(i)}
+                  aria-label="Remover foto"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
+            <label className="ptk-upload-box ptk-upload-add">
+              <ImagePlus size={20} color="var(--line)" />
+              <input type="file" accept="image/*" multiple onChange={handleImagesChange} />
+            </label>
           </div>
-          <label className="ptk-upload-label">
-            <ImagePlus size={15} />
-            {form.imagem ? "Trocar foto" : "Adicionar foto"}
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-          </label>
+          <span className="ptk-upload-hint">
+            {form.imagens.length > 0
+              ? `${form.imagens.length} foto(s) adicionada(s)`
+              : "Nenhuma foto adicionada ainda"}
+          </span>
         </div>
 
         <div className="ptk-cadastro-fields">
@@ -69,7 +95,7 @@ export function CadastrarPecaForm({ onAdd }) {
             />
           </div>
           <div>
-            <label className="ptk-label">Descrição</label>
+            <label className="ptk-label">Descrição (opcional)</label>
             <textarea
               className="ptk-textarea"
               value={form.descricao}

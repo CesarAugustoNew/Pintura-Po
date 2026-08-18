@@ -19,12 +19,17 @@
 /* Upload de imagem */
 .ptk-upload {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
+}
+.ptk-upload-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .ptk-upload-box {
-  width: 96px;
-  height: 96px;
+  width: 84px;
+  height: 84px;
   border: 1px dashed var(--line);
   border-radius: 10px;
   background: var(--bg);
@@ -40,18 +45,38 @@
   height: 100%;
   object-fit: cover;
 }
-.ptk-upload-label {
-  font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent-2);
-  cursor: pointer;
-  display: inline-flex;
+.ptk-upload-thumb-remove {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(32, 30, 26, 0.65);
+  color: #fff;
+  display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.ptk-upload-thumb-remove:hover {
+  background: var(--danger);
+}
+.ptk-upload-add {
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.ptk-upload-add:hover {
+  border-color: var(--accent-2);
 }
 .ptk-upload input[type="file"] {
   display: none;
+}
+.ptk-upload-hint {
+  font-size: 12px;
+  color: var(--muted);
 }
 
 /* Embalagem */
@@ -141,6 +166,32 @@
   height: 100%;
   object-fit: cover;
   display: block;
+}
+.ptk-card-thumbs {
+  display: flex;
+  gap: 5px;
+  padding: 6px 8px 0;
+  overflow-x: auto;
+}
+.ptk-card-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+.ptk-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ptk-card-thumb.is-active {
+  border-color: var(--accent-2);
 }
 .ptk-card-body {
   padding: 12px 14px 14px;
