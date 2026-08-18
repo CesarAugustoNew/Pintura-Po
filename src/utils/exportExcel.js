@@ -20,10 +20,10 @@ export function exportarLancamentosExcel({ entries, totalPecasDia, totalBarrasDi
     "Total de peças",
   ];
   const lancamentosRows = entries.map((e) => [
-    e.peca,
-    e.lote,
+    e.isSetup ? "SETUP (troca de tinta)" : e.peca,
+    e.isSetup ? "—" : e.lote,
     e.horaInicio || "",
-    e.qtdPorBarra,
+    e.isSetup ? "—" : e.qtdPorBarra,
     e.barraInicial,
     e.barraFinal,
     e.barrasUsadas,
