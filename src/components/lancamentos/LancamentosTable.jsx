@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Check, PaintBucket, Pencil, Trash2, X } from "lucide-react";
+import { Check, PaintBucket, Pencil, Trash2, Wrench, X } from "lucide-react";
 import { buildBarraSequence } from "../../utils/barras";
 import { TOTAL_BARRAS } from "../../constants";
+import { useConfirm } from "../common/ConfirmDialogProvider";
 
 function toEditForm(entry) {
   return {
@@ -12,10 +13,12 @@ function toEditForm(entry) {
     barraFinal: String(entry.barraFinal),
     qtdUltimaBarra: entry.qtdUltimaBarra === null ? "" : String(entry.qtdUltimaBarra),
     horaInicio: entry.horaInicio || "",
+    isSetup: !!entry.isSetup,
   };
 }
 
 export function LancamentosTable({ entries, onUpdate, onRemove }) {
+  const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
@@ -37,6 +40,18 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
     if (editError) setEditError("");
   }
 
+  function toggleEditSetup() {
+    setEditForm((f) => ({
+      ...f,
+      isSetup: !f.isSetup,
+      peca: f.isSetup ? "" : "",
+      lote: "",
+      qtdPorBarra: "",
+      qtdUltimaBarra: "",
+    }));
+    if (editError) setEditError("");
+  }
+
   function saveEdit(id) {
     const result = onUpdate(id, editForm);
     if (!result.ok) {
@@ -46,13 +61,25 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
     cancelEdit();
   }
 
+  async function handleRemove(entry) {
+    const ok = await confirm({
+      title: entry.isSetup ? "Remover setup?" : "Remover lançamento?",
+      message: entry.isSetup
+        ? `O setup nas barras ${entry.barraInicial}–${entry.barraFinal} será removido. Essa ação não pode ser desfeita.`
+        : `O lançamento de ${entry.peca} (lote ${entry.lote}) será removido. Essa ação não pode ser desfeita.`,
+    });
+    if (ok) onRemove(entry.id);
+  }
+
   // Prévia do total enquanto edita, pra dar feedback imediato antes de salvar.
   function previewTotal(form) {
-    const qtd = parseInt(form.qtdPorBarra, 10);
     const bi = parseInt(form.barraInicial, 10);
     const bf = parseInt(form.barraFinal, 10);
     const barras = buildBarraSequence(bi, bf).length;
-    if (isNaN(qtd) || barras === 0) return null;
+    if (barras === 0) return null;
+    if (form.isSetup) return 0;
+    const qtd = parseInt(form.qtdPorBarra, 10);
+    if (isNaN(qtd)) return null;
     const temUltima = form.qtdUltimaBarra !== "";
     const qtdUltima = temUltima ? parseInt(form.qtdUltimaBarra, 10) : null;
     if (temUltima && !isNaN(qtdUltima)) return qtd * (barras - 1) + qtdUltima;
@@ -91,18 +118,28 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                   return (
                     <tr key={e.id}>
                       <td>
-                        <input
-                          className="ptk-input ptk-input-cell"
-                          value={editForm.peca}
-                          onChange={(ev) => updateEditField("peca", ev.target.value.toUpperCase())}
-                        />
+                        <label className="ptk-setup-toggle" style={{ fontSize: "10px", marginBottom: "4px" }}>
+                          <input type="checkbox" checked={editForm.isSetup} onChange={toggleEditSetup} />
+                          <Wrench size={12} /> Setup
+                        </label>
+                        {!editForm.isSetup && (
+                          <input
+                            className="ptk-input ptk-input-cell"
+                            value={editForm.peca}
+                            onChange={(ev) => updateEditField("peca", ev.target.value.toUpperCase())}
+                          />
+                        )}
                       </td>
                       <td>
-                        <input
-                          className="ptk-input ptk-input-cell"
-                          value={editForm.lote}
-                          onChange={(ev) => updateEditField("lote", ev.target.value.toUpperCase())}
-                        />
+                        {editForm.isSetup ? (
+                          <span style={{ color: "var(--muted)" }}>—</span>
+                        ) : (
+                          <input
+                            className="ptk-input ptk-input-cell"
+                            value={editForm.lote}
+                            onChange={(ev) => updateEditField("lote", ev.target.value.toUpperCase())}
+                          />
+                        )}
                       </td>
                       <td>
                         <input
@@ -114,14 +151,18 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                         />
                       </td>
                       <td>
-                        <input
-                          className="ptk-input ptk-input-cell"
-                          type="number"
-                          min="1"
-                          style={{ width: "64px" }}
-                          value={editForm.qtdPorBarra}
-                          onChange={(ev) => updateEditField("qtdPorBarra", ev.target.value)}
-                        />
+                        {editForm.isSetup ? (
+                          <span style={{ color: "var(--muted)" }}>—</span>
+                        ) : (
+                          <input
+                            className="ptk-input ptk-input-cell"
+                            type="number"
+                            min="1"
+                            style={{ width: "64px" }}
+                            value={editForm.qtdPorBarra}
+                            onChange={(ev) => updateEditField("qtdPorBarra", ev.target.value)}
+                          />
+                        )}
                       </td>
                       <td style={{ whiteSpace: "nowrap" }}>
                         <input
@@ -145,15 +186,19 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                         />
                       </td>
                       <td>
-                        <input
-                          className="ptk-input ptk-input-cell"
-                          type="number"
-                          min="0"
-                          style={{ width: "64px" }}
-                          placeholder="cheia"
-                          value={editForm.qtdUltimaBarra}
-                          onChange={(ev) => updateEditField("qtdUltimaBarra", ev.target.value)}
-                        />
+                        {editForm.isSetup ? (
+                          <span style={{ color: "var(--muted)" }}>—</span>
+                        ) : (
+                          <input
+                            className="ptk-input ptk-input-cell"
+                            type="number"
+                            min="0"
+                            style={{ width: "64px" }}
+                            placeholder="cheia"
+                            value={editForm.qtdUltimaBarra}
+                            onChange={(ev) => updateEditField("qtdUltimaBarra", ev.target.value)}
+                          />
+                        )}
                       </td>
                       <td className="ptk-mono" style={{ color: "var(--accent)" }}>
                         {total !== null ? total : "—"}
@@ -168,6 +213,36 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                           </button>
                         </div>
                         {editError && <div className="ptk-error" style={{ marginTop: "4px" }}>{editError}</div>}
+                      </td>
+                    </tr>
+                  );
+                }
+
+                if (e.isSetup) {
+                  return (
+                    <tr key={e.id}>
+                      <td>
+                        <span className="ptk-setup-badge">
+                          <Wrench size={11} /> Setup
+                        </span>
+                      </td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>—</td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>{e.horaInicio || "—"}</td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>—</td>
+                      <td className="ptk-mono">
+                        {e.barraInicial}–{e.barraFinal} <span style={{ color: "var(--muted)" }}>({e.barrasUsadas})</span>
+                      </td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>—</td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>0</td>
+                      <td>
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          <button className="ptk-remove" onClick={() => startEdit(e)} aria-label="Editar setup">
+                            <Pencil size={15} />
+                          </button>
+                          <button className="ptk-remove" onClick={() => handleRemove(e)} aria-label="Remover setup">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -191,7 +266,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                         <button className="ptk-remove" onClick={() => startEdit(e)} aria-label="Editar lançamento">
                           <Pencil size={15} />
                         </button>
-                        <button className="ptk-remove" onClick={() => onRemove(e.id)} aria-label="Remover lançamento">
+                        <button className="ptk-remove" onClick={() => handleRemove(e)} aria-label="Remover lançamento">
                           <Trash2 size={15} />
                         </button>
                       </div>
