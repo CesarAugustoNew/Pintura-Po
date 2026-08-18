@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check, Layers3, Pencil, Trash2, X } from "lucide-react";
 import { formatDatePtBr } from "../../utils/date";
+import { useConfirm } from "../common/ConfirmDialogProvider";
 
 function toEditForm(sobra) {
   return {
@@ -12,6 +13,7 @@ function toEditForm(sobra) {
 }
 
 export function SobrasTable({ sobras, onUpdate, onRemove }) {
+  const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
@@ -40,6 +42,14 @@ export function SobrasTable({ sobras, onUpdate, onRemove }) {
       return;
     }
     cancelEdit();
+  }
+
+  async function handleRemove(sobra) {
+    const ok = await confirm({
+      title: "Remover sobra?",
+      message: `A sobra de ${sobra.peca} será removida. Essa ação não pode ser desfeita.`,
+    });
+    if (ok) onRemove(sobra.id);
   }
 
   return (
@@ -131,7 +141,7 @@ export function SobrasTable({ sobras, onUpdate, onRemove }) {
                         <button className="ptk-remove" onClick={() => startEdit(s)} aria-label="Editar sobra">
                           <Pencil size={15} />
                         </button>
-                        <button className="ptk-remove" onClick={() => onRemove(s.id)} aria-label="Remover sobra">
+                        <button className="ptk-remove" onClick={() => handleRemove(s)} aria-label="Remover sobra">
                           <Trash2 size={15} />
                         </button>
                       </div>

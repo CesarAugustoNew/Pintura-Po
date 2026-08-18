@@ -6,6 +6,7 @@ import { OrdensTab } from "./components/ordens/OrdensTab";
 import { SobrasTab } from "./components/sobras/SobrasTab";
 import { CatalogoTab } from "./components/catalogo/CatalogoTab";
 import { ParadasTab } from "./components/paradas/ParadasTab";
+import { ConfirmDialogProvider } from "./components/common/ConfirmDialogProvider";
 import { useLancamentos } from "./hooks/useLancamentos";
 import { useOrdensProducao } from "./hooks/useOrdensProducao";
 import { useSobras } from "./hooks/useSobras";
@@ -30,24 +31,26 @@ export default function App() {
   return (
     <div className="ptk-wrap">
       <div className="ptk-container">
-        <Header today={today} />
-        <Tabs activeTab={activeTab} onChange={setActiveTab} />
+        <ConfirmDialogProvider>
+          <Header today={today} />
+          <Tabs activeTab={activeTab} onChange={setActiveTab} />
 
-        <div style={{ display: activeTab === "lancamentos" ? "contents" : "none" }}>
-          <LancamentosTab {...lancamentos} catalogoPecas={catalogo.pecas} />
-        </div>
-        <div style={{ display: activeTab === "ordens" ? "contents" : "none" }}>
-          <OrdensTab {...ordens} />
-        </div>
-        <div style={{ display: activeTab === "sobras" ? "contents" : "none" }}>
-          <SobrasTab {...sobras} catalogoPecas={catalogo.pecas} />
-        </div>
-        <div style={{ display: activeTab === "catalogo" ? "contents" : "none" }}>
-          <CatalogoTab {...catalogo} />
-        </div>
-        <div style={{ display: activeTab === "paradas" ? "contents" : "none" }}>
-          <ParadasTab {...paradas} />
-        </div>
+          <div style={{ display: activeTab === "lancamentos" ? "contents" : "none" }}>
+            <LancamentosTab {...lancamentos} catalogoPecas={catalogo.pecas} />
+          </div>
+          <div style={{ display: activeTab === "ordens" ? "contents" : "none" }}>
+            <OrdensTab {...ordens} />
+          </div>
+          <div style={{ display: activeTab === "sobras" ? "contents" : "none" }}>
+            <SobrasTab {...sobras} catalogoPecas={catalogo.pecas} />
+          </div>
+          <div style={{ display: activeTab === "catalogo" ? "contents" : "none" }}>
+            <CatalogoTab {...catalogo} />
+          </div>
+          <div style={{ display: activeTab === "paradas" ? "contents" : "none" }}>
+            <ParadasTab {...paradas} />
+          </div>
+        </ConfirmDialogProvider>
       </div>
     </div>
   );

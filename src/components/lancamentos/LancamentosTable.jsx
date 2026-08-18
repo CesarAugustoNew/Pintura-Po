@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, PaintBucket, Pencil, Trash2, Wrench, X } from "lucide-react";
 import { buildBarraSequence } from "../../utils/barras";
 import { TOTAL_BARRAS } from "../../constants";
+import { useConfirm } from "../common/ConfirmDialogProvider";
 
 function toEditForm(entry) {
   return {
@@ -17,6 +18,7 @@ function toEditForm(entry) {
 }
 
 export function LancamentosTable({ entries, onUpdate, onRemove }) {
+  const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
@@ -57,6 +59,16 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
       return;
     }
     cancelEdit();
+  }
+
+  async function handleRemove(entry) {
+    const ok = await confirm({
+      title: entry.isSetup ? "Remover setup?" : "Remover lançamento?",
+      message: entry.isSetup
+        ? `O setup nas barras ${entry.barraInicial}–${entry.barraFinal} será removido. Essa ação não pode ser desfeita.`
+        : `O lançamento de ${entry.peca} (lote ${entry.lote}) será removido. Essa ação não pode ser desfeita.`,
+    });
+    if (ok) onRemove(entry.id);
   }
 
   // Prévia do total enquanto edita, pra dar feedback imediato antes de salvar.
@@ -227,7 +239,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                           <button className="ptk-remove" onClick={() => startEdit(e)} aria-label="Editar setup">
                             <Pencil size={15} />
                           </button>
-                          <button className="ptk-remove" onClick={() => onRemove(e.id)} aria-label="Remover setup">
+                          <button className="ptk-remove" onClick={() => handleRemove(e)} aria-label="Remover setup">
                             <Trash2 size={15} />
                           </button>
                         </div>
@@ -254,7 +266,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                         <button className="ptk-remove" onClick={() => startEdit(e)} aria-label="Editar lançamento">
                           <Pencil size={15} />
                         </button>
-                        <button className="ptk-remove" onClick={() => onRemove(e.id)} aria-label="Remover lançamento">
+                        <button className="ptk-remove" onClick={() => handleRemove(e)} aria-label="Remover lançamento">
                           <Trash2 size={15} />
                         </button>
                       </div>

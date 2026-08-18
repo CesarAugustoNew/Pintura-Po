@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Check, ClipboardList, Pencil, RotateCcw, Send, Star, Trash2, X } from "lucide-react";
 import { formatDatePtBr } from "../../utils/date";
 import { getStatusOrdem, STATUS_LABELS } from "../../utils/ordens";
+import { useConfirm } from "../common/ConfirmDialogProvider";
 
 function toEditForm(ordem) {
   return {
@@ -21,6 +22,7 @@ function StatusBadge({ ordem }) {
 }
 
 export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLimparEnvio }) {
+  const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
@@ -54,6 +56,14 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
       return;
     }
     cancelEdit();
+  }
+
+  async function handleRemove(ordem) {
+    const ok = await confirm({
+      title: "Remover ordem de produção?",
+      message: `A ordem de ${ordem.peca} (lote ${ordem.lote}) será removida. Essa ação não pode ser desfeita.`,
+    });
+    if (ok) onRemove(ordem.id);
   }
 
   function startShipping(ordem) {
@@ -269,7 +279,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
                         <button className="ptk-remove" onClick={() => startEdit(o)} aria-label="Editar ordem">
                           <Pencil size={15} />
                         </button>
-                        <button className="ptk-remove" onClick={() => onRemove(o.id)} aria-label="Remover ordem">
+                        <button className="ptk-remove" onClick={() => handleRemove(o)} aria-label="Remover ordem">
                           <Trash2 size={15} />
                         </button>
                       </div>
