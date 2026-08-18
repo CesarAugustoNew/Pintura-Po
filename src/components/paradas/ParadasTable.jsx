@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Check, ListChecks, Pencil, Trash2, X } from "lucide-react";
 import { formatDatePtBr } from "../../utils/date";
 import { calcularDuracaoMinutos, formatDuracao } from "../../utils/paradas";
+import { useConfirm } from "../common/ConfirmDialogProvider";
 
 function toEditForm(parada) {
   return { motivo: parada.motivo, horaInicio: parada.horaInicio, horaFim: parada.horaFim };
 }
 
 export function ParadasTable({ paradas, onUpdate, onRemove }) {
+  const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
@@ -36,6 +38,14 @@ export function ParadasTable({ paradas, onUpdate, onRemove }) {
       return;
     }
     cancelEdit();
+  }
+
+  async function handleRemove(parada) {
+    const ok = await confirm({
+      title: "Remover parada?",
+      message: `A parada "${parada.motivo}" será removida. Essa ação não pode ser desfeita.`,
+    });
+    if (ok) onRemove(parada.id);
   }
 
   function previewDuracao(form) {
@@ -130,7 +140,7 @@ export function ParadasTable({ paradas, onUpdate, onRemove }) {
                         <button className="ptk-remove" onClick={() => startEdit(p)} aria-label="Editar parada">
                           <Pencil size={15} />
                         </button>
-                        <button className="ptk-remove" onClick={() => onRemove(p.id)} aria-label="Remover parada">
+                        <button className="ptk-remove" onClick={() => handleRemove(p)} aria-label="Remover parada">
                           <Trash2 size={15} />
                         </button>
                       </div>
