@@ -34,13 +34,15 @@ export function useLancamentos() {
 
   const porModelo = useMemo(() => {
     const map = new Map();
-    entries.forEach((e) => {
-      if (!map.has(e.peca)) map.set(e.peca, { peca: e.peca, totalPecas: 0, lotes: new Set(), barras: 0 });
-      const item = map.get(e.peca);
-      item.totalPecas += e.totalPecas;
-      item.lotes.add(e.lote);
-      item.barras += e.barrasUsadas;
-    });
+    entries
+      .filter((e) => !e.isSetup)
+      .forEach((e) => {
+        if (!map.has(e.peca)) map.set(e.peca, { peca: e.peca, totalPecas: 0, lotes: new Set(), barras: 0 });
+        const item = map.get(e.peca);
+        item.totalPecas += e.totalPecas;
+        item.lotes.add(e.lote);
+        item.barras += e.barrasUsadas;
+      });
     return Array.from(map.values()).sort((a, b) => b.totalPecas - a.totalPecas);
   }, [entries]);
 
