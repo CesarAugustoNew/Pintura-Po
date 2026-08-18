@@ -1,20 +1,3 @@
-# Front-End (Node / Vite)
-Front-End/node_modules/
-Front-End/dist/
-Front-End/.env
-Front-End/.env.local
-
-# Back-End (Java / Maven / Spring Boot)
-Back-End/target/
-Back-End/.env
-Back-End/application-local.yml
-Back-End/*.log
-
-# IDE
-.idea/
-.vscode/
-*.iml
-
-# Sistema
+node_modules
+dist
 .DS_Store
-Thumbs.db
