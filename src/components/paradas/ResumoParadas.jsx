@@ -1,9 +1,9 @@
 import { formatDuracao } from "../../utils/paradas";
 
-export function ResumoParadas({ totalMinutosParado, totalRegistros }) {
+export function ResumoParadas({ titulo = "Resumo de paradas", totalMinutosParado, totalRegistros }) {
   return (
     <div className="ptk-panel">
-      <h2 className="ptk-panel-title">Resumo de paradas</h2>
+      <h2 className="ptk-panel-title">{titulo}</h2>
 
       <div className="ptk-stats-grid">
         <div className="ptk-stat">

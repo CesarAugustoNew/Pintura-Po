@@ -3,6 +3,7 @@ import { Check, PaintBucket, Pencil, Trash2, Wrench, X } from "lucide-react";
 import { buildBarraSequence } from "../../utils/barras";
 import { TOTAL_BARRAS } from "../../constants";
 import { useConfirm } from "../common/ConfirmDialogProvider";
+import { TurnoBadge } from "../common/TurnoBadge";
 
 function toEditForm(entry) {
   return {
@@ -17,7 +18,7 @@ function toEditForm(entry) {
   };
 }
 
-export function LancamentosTable({ entries, onUpdate, onRemove }) {
+export function LancamentosTable({ entries, onUpdate, onRemove, titulo = "Lançamentos de hoje" }) {
   const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -89,7 +90,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
   return (
     <div className="ptk-panel">
       <h2 className="ptk-panel-title">
-        <PaintBucket size={16} color="var(--accent-2)" /> Lançamentos de hoje
+        <PaintBucket size={16} color="var(--accent-2)" /> {titulo}
       </h2>
 
       {entries.length === 0 ? (
@@ -99,6 +100,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
           <table className="ptk-table">
             <thead>
               <tr>
+                <th></th>
                 <th>Peça</th>
                 <th>Lote</th>
                 <th>Início</th>
@@ -117,6 +119,9 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                   const total = previewTotal(editForm);
                   return (
                     <tr key={e.id}>
+                      <td>
+                        <TurnoBadge turno={e.turno} />
+                      </td>
                       <td>
                         <label className="ptk-setup-toggle" style={{ fontSize: "10px", marginBottom: "4px" }}>
                           <input type="checkbox" checked={editForm.isSetup} onChange={toggleEditSetup} />
@@ -222,6 +227,9 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
                   return (
                     <tr key={e.id}>
                       <td>
+                        <TurnoBadge turno={e.turno} />
+                      </td>
+                      <td>
                         <span className="ptk-setup-badge">
                           <Wrench size={11} /> Setup
                         </span>
@@ -250,6 +258,9 @@ export function LancamentosTable({ entries, onUpdate, onRemove }) {
 
                 return (
                   <tr key={e.id}>
+                    <td>
+                      <TurnoBadge turno={e.turno} />
+                    </td>
                     <td className="ptk-mono">{e.peca}</td>
                     <td className="ptk-mono">{e.lote}</td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{e.horaInicio || "—"}</td>

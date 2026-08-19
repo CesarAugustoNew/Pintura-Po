@@ -1,11 +1,16 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { calcularDuracaoMinutos } from "../utils/paradas";
+import { getTurnoPorHorario } from "../utils/turnos";
 
 /**
  * Centraliza o estado e as regras de negócio das paradas de produção:
  * motivo, horário de início/fim e duração calculada automaticamente.
+ *
+ * Assim como os lançamentos, o turno da parada é calculado a partir do
+ * horário de início; se por algum motivo não der pra calcular, usa
+ * `turnoAtivo` (o turno selecionado no momento) como padrão.
  */
-export function useParadas() {
+export function useParadas(turnoAtivo) {
   const [paradas, setParadas] = useState([]);
 
   function validar({ motivo, horaInicio, horaFim }) {
@@ -24,6 +29,8 @@ export function useParadas() {
     const result = validar({ motivo, horaInicio, horaFim });
     if (!result.ok) return result;
 
+    const turno = getTurnoPorHorario(horaInicio) || turnoAtivo;
+
     setParadas((prev) => [
       {
         id: Date.now(),
@@ -31,6 +38,7 @@ export function useParadas() {
         horaInicio,
         horaFim,
         duracaoMinutos: result.duracaoMinutos,
+        turno,
         data: new Date(),
       },
       ...prev,
@@ -43,10 +51,12 @@ export function useParadas() {
     const result = validar({ motivo, horaInicio, horaFim });
     if (!result.ok) return result;
 
+    const turno = getTurnoPorHorario(horaInicio) || turnoAtivo;
+
     setParadas((prev) =>
       prev.map((p) =>
         p.id === id
-          ? { ...p, motivo: motivo.trim(), horaInicio, horaFim, duracaoMinutos: result.duracaoMinutos }
+          ? { ...p, motivo: motivo.trim(), horaInicio, horaFim, duracaoMinutos: result.duracaoMinutos, turno }
           : p
       )
     );
@@ -58,10 +68,5 @@ export function useParadas() {
     setParadas((prev) => prev.filter((p) => p.id !== id));
   }
 
-  const totalMinutosParado = useMemo(
-    () => paradas.reduce((s, p) => s + p.duracaoMinutos, 0),
-    [paradas]
-  );
-
-  return { paradas, addParada, updateParada, removeParada, totalMinutosParado };
+  return { paradas, addParada, updateParada, removeParada };
 }
