@@ -3,14 +3,19 @@ import { getStatusOrdem } from "../utils/ordens";
 
 /**
  * Centraliza o estado e as regras de negócio da ordem de produção do dia:
- * quais peças/lotes vão embora, a quantidade combinada (meta), se são
- * prioridade e (opcionalmente) o horário em que a peça sai. Depois que a
- * peça sai, dá pra registrar quanto foi realmente enviado — se não bater
- * a meta, a ordem fica marcada como "incompleta" em vez de "concluída".
+ * quais peças/lotes precisam sair, a quantidade combinada (meta) e se são
+ * prioridade. A quantidade já produzida é abatida automaticamente pelos
+ * lançamentos de pintura da mesma peça — o lote do lançamento não precisa
+ * bater com o lote da ordem, já que a mesma peça pode ser pintada em
+ * lotes diferentes ao longo do dia e tudo conta pra mesma meta (sem
+ * contar setups, que não têm peça de verdade). Assim que o lançamento é
+ * feito, a ordem soma a produção e vai ficando mais perto de "concluída"
+ * sozinha, sem precisar registrar nada manualmente.
+ *
  * A lista fica sempre ordenada com as prioridades no topo e, dentro de
  * cada grupo, pelo horário de saída.
  */
-export function useOrdensProducao() {
+export function useOrdensProducao(lancamentos = []) {
   const [ordens, setOrdens] = useState([]);
 
   function validar({ peca, lote, quantidade }) {
@@ -33,7 +38,6 @@ export function useOrdensProducao() {
         peca: peca.trim().toUpperCase(),
         lote: lote.trim().toUpperCase(),
         quantidade: Number(quantidade),
-        quantidadeEnviada: null,
         prioridade: !!prioridade,
         horarioSaida: horarioSaida || "",
         data: new Date(),
@@ -66,45 +70,45 @@ export function useOrdensProducao() {
     return { ok: true };
   }
 
-  // Registra quanto foi de fato enviado. Se vier menor que a meta, a
-  // ordem continua na lista marcada como "incompleta" (não bateu a meta)
-  // em vez de sumir ou virar "concluída" incorretamente.
-  function registrarEnvio(id, quantidadeEnviada) {
-    const qtd = Number(quantidadeEnviada);
-    if (quantidadeEnviada === "" || isNaN(qtd) || qtd < 0) {
-      return { ok: false, error: "Informe a quantidade enviada." };
-    }
-
-    setOrdens((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, quantidadeEnviada: qtd } : o))
-    );
-
-    return { ok: true };
-  }
-
-  // Desfaz o registro de envio, voltando a ordem para "pendente".
-  function limparEnvio(id) {
-    setOrdens((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, quantidadeEnviada: null } : o))
-    );
-  }
-
   function removeOrdem(id) {
     setOrdens((prev) => prev.filter((o) => o.id !== id));
   }
+
+  // Soma, por peça, tudo que já foi lançado (ignorando setups, que não
+  // representam peça nenhuma). O abate é só por peça — o lote do
+  // lançamento pode ser diferente do lote da ordem, já que a mesma peça
+  // pode ser pintada em lotes distintos ao longo do dia e tudo conta
+  // pra mesma meta.
+  const produzidoPorPeca = useMemo(() => {
+    const map = new Map();
+    lancamentos
+      .filter((l) => !l.isSetup)
+      .forEach((l) => {
+        map.set(l.peca, (map.get(l.peca) || 0) + l.totalPecas);
+      });
+    return map;
+  }, [lancamentos]);
+
+  // Ordens já com a quantidade produzida abatida automaticamente.
+  const ordensComProducao = useMemo(() => {
+    return ordens.map((o) => ({
+      ...o,
+      quantidadeProduzida: produzidoPorPeca.get(o.peca) || 0,
+    }));
+  }, [ordens, produzidoPorPeca]);
 
   // Prioridade primeiro; dentro do mesmo grupo, quem tem horário de saída
   // definido vem em ordem crescente, e quem não tem fica por último
   // (mantendo a ordem de registro entre eles).
   const ordensOrdenadas = useMemo(() => {
-    return [...ordens].sort((a, b) => {
+    return [...ordensComProducao].sort((a, b) => {
       if (a.prioridade !== b.prioridade) return a.prioridade ? -1 : 1;
       if (a.horarioSaida && b.horarioSaida) return a.horarioSaida.localeCompare(b.horarioSaida);
       if (a.horarioSaida) return -1;
       if (b.horarioSaida) return 1;
       return 0;
     });
-  }, [ordens]);
+  }, [ordensComProducao]);
 
   const totalPrioridades = useMemo(
     () => ordens.filter((o) => o.prioridade).length,
@@ -116,32 +120,30 @@ export function useOrdensProducao() {
     [ordens]
   );
 
-  const totalEnviado = useMemo(
-    () => ordens.reduce((sum, o) => sum + (o.quantidadeEnviada || 0), 0),
-    [ordens]
+  const totalProduzido = useMemo(
+    () => ordensComProducao.reduce((sum, o) => sum + o.quantidadeProduzida, 0),
+    [ordensComProducao]
   );
 
   const totalCompletas = useMemo(
-    () => ordens.filter((o) => getStatusOrdem(o) === "completo").length,
-    [ordens]
+    () => ordensComProducao.filter((o) => getStatusOrdem(o) === "completo").length,
+    [ordensComProducao]
   );
 
   const totalIncompletas = useMemo(
-    () => ordens.filter((o) => getStatusOrdem(o) === "incompleto").length,
-    [ordens]
+    () => ordensComProducao.filter((o) => getStatusOrdem(o) === "incompleto").length,
+    [ordensComProducao]
   );
 
   return {
     ordens: ordensOrdenadas,
     addOrdem,
     updateOrdem,
-    registrarEnvio,
-    limparEnvio,
     removeOrdem,
     totalOrdens: ordens.length,
     totalPrioridades,
     totalMeta,
-    totalEnviado,
+    totalProduzido,
     totalCompletas,
     totalIncompletas,
   };

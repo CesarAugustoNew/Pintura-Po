@@ -6,29 +6,21 @@ export function OrdensTab({
   ordens,
   addOrdem,
   updateOrdem,
-  registrarEnvio,
-  limparEnvio,
   removeOrdem,
   totalOrdens,
   totalPrioridades,
   totalMeta,
-  totalEnviado,
+  totalProduzido,
 }) {
   return (
     <>
       <NovaOrdemForm onAdd={addOrdem} />
-      <OrdensTable
-        ordens={ordens}
-        onUpdate={updateOrdem}
-        onRemove={removeOrdem}
-        onRegistrarEnvio={registrarEnvio}
-        onLimparEnvio={limparEnvio}
-      />
+      <OrdensTable ordens={ordens} onUpdate={updateOrdem} onRemove={removeOrdem} />
       <ResumoOrdens
         totalOrdens={totalOrdens}
         totalPrioridades={totalPrioridades}
         totalMeta={totalMeta}
-        totalEnviado={totalEnviado}
+        totalProduzido={totalProduzido}
       />
     </>
   );

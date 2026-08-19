@@ -23,7 +23,7 @@ export default function App() {
   // desmontado. Assim os dados de cada aba sobrevivem quando o usuário
   // navega para outra aba e volta depois.
   const lancamentos = useLancamentos();
-  const ordens = useOrdensProducao();
+  const ordens = useOrdensProducao(lancamentos.entries);
   const sobras = useSobras();
   const catalogo = useCatalogoPecas();
   const paradas = useParadas();

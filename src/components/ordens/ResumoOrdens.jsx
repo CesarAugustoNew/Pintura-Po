@@ -2,7 +2,7 @@ export function ResumoOrdens({
   totalOrdens,
   totalPrioridades,
   totalMeta,
-  totalEnviado,
+  totalProduzido,
 }) {
   return (
     <div className="ptk-panel">
@@ -22,8 +22,8 @@ export function ResumoOrdens({
           <div className="ptk-stat-value">{totalMeta}</div>
         </div>
         <div className="ptk-stat">
-          <div className="ptk-stat-label">Enviado até agora</div>
-          <div className="ptk-stat-value">{totalEnviado}</div>
+          <div className="ptk-stat-label">Produzido até agora</div>
+          <div className="ptk-stat-value">{totalProduzido}</div>
         </div>
       </div>
     </div>
