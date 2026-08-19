@@ -1,7 +1,7 @@
 import { FileSpreadsheet } from "lucide-react";
 import { exportarLancamentosExcel } from "../../utils/exportExcel";
 
-export function ResumoDia({ entries, totalPecasDia, totalBarrasDia, porModelo }) {
+export function ResumoDia({ entries, totalPecasDia, totalBarrasDia, porModelo, titulo = "Resumo do dia" }) {
   function handleExport() {
     exportarLancamentosExcel({
       entries,
@@ -9,6 +9,7 @@ export function ResumoDia({ entries, totalPecasDia, totalBarrasDia, porModelo })
       totalBarrasDia,
       porModelo,
       today: new Date(),
+      titulo,
     });
   }
 
@@ -25,7 +26,7 @@ export function ResumoDia({ entries, totalPecasDia, totalBarrasDia, porModelo })
         }}
       >
         <h2 className="ptk-panel-title" style={{ margin: 0 }}>
-          Resumo do dia
+          {titulo}
         </h2>
         <button className="ptk-btn" onClick={handleExport}>
           <FileSpreadsheet size={16} /> Exportar Excel
@@ -34,11 +35,11 @@ export function ResumoDia({ entries, totalPecasDia, totalBarrasDia, porModelo })
 
       <div className="ptk-stats-grid">
         <div className="ptk-stat">
-          <div className="ptk-stat-label">Total de peças hoje</div>
+          <div className="ptk-stat-label">Total de peças</div>
           <div className="ptk-stat-value">{totalPecasDia}</div>
         </div>
         <div className="ptk-stat">
-          <div className="ptk-stat-label">Barras usadas hoje</div>
+          <div className="ptk-stat-label">Barras usadas</div>
           <div className="ptk-stat-value">{totalBarrasDia}</div>
         </div>
         <div className="ptk-stat">

@@ -3,12 +3,13 @@ import { Check, ListChecks, Pencil, Trash2, X } from "lucide-react";
 import { formatDatePtBr } from "../../utils/date";
 import { calcularDuracaoMinutos, formatDuracao } from "../../utils/paradas";
 import { useConfirm } from "../common/ConfirmDialogProvider";
+import { TurnoBadge } from "../common/TurnoBadge";
 
 function toEditForm(parada) {
   return { motivo: parada.motivo, horaInicio: parada.horaInicio, horaFim: parada.horaFim };
 }
 
-export function ParadasTable({ paradas, onUpdate, onRemove }) {
+export function ParadasTable({ paradas, onUpdate, onRemove, titulo = "Paradas registradas" }) {
   const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -56,7 +57,7 @@ export function ParadasTable({ paradas, onUpdate, onRemove }) {
   return (
     <div className="ptk-panel">
       <h2 className="ptk-panel-title">
-        <ListChecks size={16} color="var(--accent-2)" /> Paradas registradas
+        <ListChecks size={16} color="var(--accent-2)" /> {titulo}
       </h2>
 
       {paradas.length === 0 ? (
@@ -66,6 +67,7 @@ export function ParadasTable({ paradas, onUpdate, onRemove }) {
           <table className="ptk-table">
             <thead>
               <tr>
+                <th></th>
                 <th>Motivo</th>
                 <th>Início</th>
                 <th>Fim</th>
@@ -82,6 +84,9 @@ export function ParadasTable({ paradas, onUpdate, onRemove }) {
                   const duracao = previewDuracao(editForm);
                   return (
                     <tr key={p.id}>
+                      <td>
+                        <TurnoBadge turno={p.turno} />
+                      </td>
                       <td>
                         <input
                           className="ptk-input ptk-input-cell"
@@ -130,6 +135,9 @@ export function ParadasTable({ paradas, onUpdate, onRemove }) {
 
                 return (
                   <tr key={p.id}>
+                    <td>
+                      <TurnoBadge turno={p.turno} />
+                    </td>
                     <td className="ptk-mono">{p.motivo}</td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{p.horaInicio}</td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{p.horaFim}</td>

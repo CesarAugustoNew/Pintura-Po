@@ -1,5 +1,6 @@
 import { TOTAL_BARRAS } from "../constants";
 import { buildBarraSequence } from "./barras";
+import { getTurnoPorHorario } from "./turnos";
 
 /**
  * Valida os campos de um lançamento e calcula barras usadas / total de peças.
@@ -12,6 +13,10 @@ import { buildBarraSequence } from "./barras";
  * Quando `isSetup` é true, o lançamento representa uma troca de tinta: as
  * barras do intervalo passam pela limpeza e não carregam peça nenhuma, então
  * peça/lote/qtd por barra não são exigidos e o total de peças fica zerado.
+ *
+ * O turno é calculado a partir do horário de início, quando informado. Se o
+ * campo ficar em branco, `turno` volta `null` e quem chama (o hook) aplica
+ * o turno ativo no momento como padrão.
  */
 export function validarECalcularLancamento(
   { peca, lote, qtdPorBarra, barraInicial, barraFinal, qtdUltimaBarra, horaInicio, isSetup },
@@ -26,6 +31,8 @@ export function validarECalcularLancamento(
 
   const barraSequence = buildBarraSequence(bi, bf);
   const barrasUsadas = barraSequence.length;
+  const horaInicioLimpa = (horaInicio || "").trim();
+  const turno = getTurnoPorHorario(horaInicioLimpa);
 
   if (isSetup) {
     return {
@@ -41,7 +48,8 @@ export function validarECalcularLancamento(
         barraSequence,
         barrasUsadas,
         totalPecas: 0,
-        horaInicio: (horaInicio || "").trim(),
+        horaInicio: horaInicioLimpa,
+        turno,
       },
     };
   }
@@ -71,7 +79,8 @@ export function validarECalcularLancamento(
       barraSequence,
       barrasUsadas,
       totalPecas,
-      horaInicio: (horaInicio || "").trim(),
+      horaInicio: horaInicioLimpa,
+      turno,
     },
   };
 }

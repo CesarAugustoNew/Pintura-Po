@@ -3,6 +3,7 @@ import { Check, ClipboardList, Pencil, Star, Trash2, X } from "lucide-react";
 import { formatDatePtBr } from "../../utils/date";
 import { getStatusOrdem, STATUS_LABELS } from "../../utils/ordens";
 import { useConfirm } from "../common/ConfirmDialogProvider";
+import { TurnoBadge } from "../common/TurnoBadge";
 
 function toEditForm(ordem) {
   return {
@@ -78,6 +79,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
             <thead>
               <tr>
                 <th></th>
+                <th>Turno</th>
                 <th>Peça</th>
                 <th>Lote</th>
                 <th>Meta</th>
@@ -108,6 +110,9 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                             fill={editForm.prioridade ? "var(--accent)" : "none"}
                           />
                         </button>
+                      </td>
+                      <td>
+                        <TurnoBadge turno={o.turno} />
                       </td>
                       <td>
                         <input
@@ -172,6 +177,9 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                           <Star size={12} fill="currentColor" /> Prioridade
                         </span>
                       )}
+                    </td>
+                    <td>
+                      <TurnoBadge turno={o.turno} />
                     </td>
                     <td className="ptk-mono">{o.peca}</td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{o.lote}</td>
