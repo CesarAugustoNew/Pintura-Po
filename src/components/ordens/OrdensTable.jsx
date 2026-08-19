@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ClipboardList, Pencil, RotateCcw, Send, Star, Trash2, X } from "lucide-react";
+import { Check, ClipboardList, Pencil, Star, Trash2, X } from "lucide-react";
 import { formatDatePtBr } from "../../utils/date";
 import { getStatusOrdem, STATUS_LABELS } from "../../utils/ordens";
 import { useConfirm } from "../common/ConfirmDialogProvider";
@@ -21,18 +21,13 @@ function StatusBadge({ ordem }) {
   );
 }
 
-export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLimparEnvio }) {
+export function OrdensTable({ ordens, onUpdate, onRemove }) {
   const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
 
-  const [shippingId, setShippingId] = useState(null);
-  const [shippingValue, setShippingValue] = useState("");
-  const [shippingError, setShippingError] = useState("");
-
   function startEdit(ordem) {
-    cancelShipping();
     setEditingId(ordem.id);
     setEditForm(toEditForm(ordem));
     setEditError("");
@@ -66,37 +61,14 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
     if (ok) onRemove(ordem.id);
   }
 
-  function startShipping(ordem) {
-    cancelEdit();
-    setShippingId(ordem.id);
-    setShippingValue(
-      ordem.quantidadeEnviada !== null && ordem.quantidadeEnviada !== undefined
-        ? String(ordem.quantidadeEnviada)
-        : String(ordem.quantidade)
-    );
-    setShippingError("");
-  }
-
-  function cancelShipping() {
-    setShippingId(null);
-    setShippingValue("");
-    setShippingError("");
-  }
-
-  function saveShipping(id) {
-    const result = onRegistrarEnvio(id, shippingValue);
-    if (!result.ok) {
-      setShippingError(result.error);
-      return;
-    }
-    cancelShipping();
-  }
-
   return (
     <div className="ptk-panel">
       <h2 className="ptk-panel-title">
         <ClipboardList size={16} color="var(--accent-2)" /> Ordem de produção de hoje
       </h2>
+      <p className="ptk-sub" style={{ marginTop: "-6px", marginBottom: "16px" }}>
+        A coluna "Produzido" é abatida automaticamente pelos lançamentos da mesma peça (o lote pode ser diferente).
+      </p>
 
       {ordens.length === 0 ? (
         <div className="ptk-empty">Nenhuma ordem registrada ainda. Adicione a primeira acima.</div>
@@ -109,7 +81,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
                 <th>Peça</th>
                 <th>Lote</th>
                 <th>Meta</th>
-                <th>Envio</th>
+                <th>Produzido</th>
                 <th>Saída</th>
                 <th>Registrada em</th>
                 <th></th>
@@ -118,8 +90,6 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
             <tbody>
               {ordens.map((o) => {
                 const isEditing = editingId === o.id;
-                const isShipping = shippingId === o.id;
-                const status = getStatusOrdem(o);
 
                 if (isEditing) {
                   return (
@@ -164,7 +134,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
                         />
                       </td>
                       <td className="ptk-mono" style={{ color: "var(--muted)" }}>
-                        {o.quantidadeEnviada ?? "—"}
+                        {o.quantidadeProduzida}
                       </td>
                       <td>
                         <input
@@ -192,6 +162,8 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
                   );
                 }
 
+                const status = getStatusOrdem(o);
+
                 return (
                   <tr key={o.id}>
                     <td>
@@ -205,70 +177,12 @@ export function OrdensTable({ ordens, onUpdate, onRemove, onRegistrarEnvio, onLi
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{o.lote}</td>
                     <td className="ptk-mono">{o.quantidade}</td>
                     <td>
-                      {isShipping ? (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                          <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-                            <input
-                              className="ptk-input ptk-input-cell"
-                              type="number"
-                              min="0"
-                              style={{ width: "80px" }}
-                              value={shippingValue}
-                              onChange={(ev) => {
-                                setShippingValue(ev.target.value);
-                                if (shippingError) setShippingError("");
-                              }}
-                              autoFocus
-                            />
-                            <button className="ptk-remove" onClick={() => saveShipping(o.id)} aria-label="Confirmar envio">
-                              <Check size={15} color="var(--accent-2)" />
-                            </button>
-                            <button className="ptk-remove" onClick={cancelShipping} aria-label="Cancelar registro de envio">
-                              <X size={15} />
-                            </button>
-                          </div>
-                          {shippingError && <div className="ptk-error">{shippingError}</div>}
-                        </div>
-                      ) : (
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                          <span className="ptk-mono" style={{ color: status === "pendente" ? "var(--muted)" : "var(--text)" }}>
-                            {o.quantidadeEnviada ?? "—"}/{o.quantidade}
-                          </span>
-                          <StatusBadge ordem={o} />
-                          {status === "pendente" ? (
-                            <button
-                              type="button"
-                              className="ptk-remove"
-                              onClick={() => startShipping(o)}
-                              aria-label="Registrar envio"
-                              title="Registrar envio"
-                            >
-                              <Send size={15} color="var(--accent-2)" />
-                            </button>
-                          ) : (
-                            <>
-                              <button
-                                type="button"
-                                className="ptk-remove"
-                                onClick={() => startShipping(o)}
-                                aria-label="Corrigir quantidade enviada"
-                                title="Corrigir quantidade enviada"
-                              >
-                                <Pencil size={14} />
-                              </button>
-                              <button
-                                type="button"
-                                className="ptk-remove"
-                                onClick={() => onLimparEnvio(o.id)}
-                                aria-label="Desfazer registro de envio"
-                                title="Desfazer registro de envio"
-                              >
-                                <RotateCcw size={14} />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      )}
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                        <span className="ptk-mono" style={{ color: status === "pendente" ? "var(--muted)" : "var(--text)" }}>
+                          {o.quantidadeProduzida}/{o.quantidade}
+                        </span>
+                        <StatusBadge ordem={o} />
+                      </div>
                     </td>
                     <td className="ptk-mono" style={{ color: o.horarioSaida ? "var(--text)" : "var(--muted)" }}>
                       {o.horarioSaida || "—"}
