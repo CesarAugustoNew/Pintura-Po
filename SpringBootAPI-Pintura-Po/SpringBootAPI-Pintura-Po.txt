@@ -1,0 +1,3 @@
+Desenvolver uma API REST utilizando Java + Spring Boot, substituindo os dados atualmente mantidos em useState e hooks do Front-End por chamadas HTTP à API.
+
+Implementar um banco de dados PostgreSQL para persistência real das informações, garantindo que os dados não sejam perdidos e que diferentes computadores/usuários trabalhem sobre a mesma base de dados.
