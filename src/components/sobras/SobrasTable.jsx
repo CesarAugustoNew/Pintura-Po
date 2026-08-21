@@ -84,14 +84,14 @@ export function SobrasTable({ sobras, onUpdate, onRemove }) {
                         <input
                           className="ptk-input ptk-input-cell"
                           value={editForm.peca}
-                          onChange={(ev) => updateEditField("peca", ev.target.value)}
+                          onChange={(ev) => updateEditField("peca", ev.target.value.toUpperCase())}
                         />
                       </td>
                       <td>
                         <input
                           className="ptk-input ptk-input-cell"
                           value={editForm.lote}
-                          onChange={(ev) => updateEditField("lote", ev.target.value)}
+                          onChange={(ev) => updateEditField("lote", ev.target.value.toUpperCase())}
                         />
                       </td>
                       <td>

@@ -12,7 +12,12 @@ function toEditForm(ordem) {
     quantidade: ordem.quantidade,
     prioridade: ordem.prioridade,
     horarioSaida: ordem.horarioSaida,
+    quantidadeEmProcesso: ordem.quantidadeEmProcesso === null ? "" : String(ordem.quantidadeEmProcesso),
   };
+}
+
+function buscarNoCatalogo(codigo, catalogoPecas) {
+  return catalogoPecas.find((p) => p.codigo.toLowerCase() === codigo.toLowerCase());
 }
 
 function StatusBadge({ ordem }) {
@@ -22,7 +27,7 @@ function StatusBadge({ ordem }) {
   );
 }
 
-export function OrdensTable({ ordens, onUpdate, onRemove }) {
+export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) {
   const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -81,10 +86,13 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                 <th></th>
                 <th>Turno</th>
                 <th>Peça</th>
+                <th>Cliente</th>
+                <th>Composição</th>
                 <th>Lote</th>
                 <th>Meta</th>
                 <th>Produzido</th>
                 <th>Saída</th>
+                <th>Qtde em processo</th>
                 <th>Registrada em</th>
                 <th></th>
               </tr>
@@ -94,6 +102,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                 const isEditing = editingId === o.id;
 
                 if (isEditing) {
+                  const pecaCatalogo = buscarNoCatalogo(editForm.peca, catalogoPecas);
                   return (
                     <tr key={o.id}>
                       <td>
@@ -120,6 +129,12 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                           value={editForm.peca}
                           onChange={(ev) => updateEditField("peca", ev.target.value.toUpperCase())}
                         />
+                      </td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>
+                        {pecaCatalogo?.cliente || "—"}
+                      </td>
+                      <td className="ptk-mono" style={{ color: "var(--muted)" }}>
+                        {pecaCatalogo?.composicao || "—"}
                       </td>
                       <td>
                         <input
@@ -149,6 +164,16 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                           onChange={(ev) => updateEditField("horarioSaida", ev.target.value)}
                         />
                       </td>
+                      <td>
+                        <input
+                          className="ptk-input ptk-input-cell"
+                          type="number"
+                          min="0"
+                          style={{ width: "80px" }}
+                          value={editForm.quantidadeEmProcesso}
+                          onChange={(ev) => updateEditField("quantidadeEmProcesso", ev.target.value)}
+                        />
+                      </td>
                       <td className="ptk-mono" style={{ color: "var(--muted)" }}>
                         {formatDatePtBr(o.data)}
                       </td>
@@ -168,6 +193,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                 }
 
                 const status = getStatusOrdem(o);
+                const pecaCatalogo = buscarNoCatalogo(o.peca, catalogoPecas);
 
                 return (
                   <tr key={o.id}>
@@ -182,6 +208,12 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                       <TurnoBadge turno={o.turno} />
                     </td>
                     <td className="ptk-mono">{o.peca}</td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>
+                      {pecaCatalogo?.cliente || "—"}
+                    </td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>
+                      {pecaCatalogo?.composicao || "—"}
+                    </td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{o.lote}</td>
                     <td className="ptk-mono">{o.quantidade}</td>
                     <td>
@@ -194,6 +226,9 @@ export function OrdensTable({ ordens, onUpdate, onRemove }) {
                     </td>
                     <td className="ptk-mono" style={{ color: o.horarioSaida ? "var(--text)" : "var(--muted)" }}>
                       {o.horarioSaida || "—"}
+                    </td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>
+                      {o.quantidadeEmProcesso !== null ? o.quantidadeEmProcesso : "—"}
                     </td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDatePtBr(o.data)}</td>
                     <td>

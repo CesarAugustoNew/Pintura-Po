@@ -211,6 +211,11 @@
   line-height: 1.4;
   flex: 1;
 }
+.ptk-card-meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-2);
+}
 .ptk-card-footer {
   display: flex;
   justify-content: flex-end;

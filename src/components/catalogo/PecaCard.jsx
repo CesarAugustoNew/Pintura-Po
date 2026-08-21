@@ -41,6 +41,11 @@ export function PecaCard({ peca, onRemove }) {
       )}
       <div className="ptk-card-body">
         <div className="ptk-card-codigo ptk-mono">{peca.codigo}</div>
+        {(peca.cliente || peca.composicao) && (
+          <div className="ptk-card-meta">
+            {[peca.cliente, peca.composicao].filter(Boolean).join(" · ")}
+          </div>
+        )}
         {peca.descricao && <div className="ptk-card-desc">{peca.descricao}</div>}
         {(peca.caixa || peca.qtdPorCaixa) && (
           <div className="ptk-embalagem-badge">

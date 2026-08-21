@@ -5,7 +5,7 @@ import { ResumoOrdens } from "./ResumoOrdens";
 import { TURNO_TODOS } from "../../constants";
 import { getTurnoLabel } from "../../utils/turnos";
 
-export function OrdensTab({ ordens, addOrdem, updateOrdem, removeOrdem, turnoFiltro }) {
+export function OrdensTab({ ordens, addOrdem, updateOrdem, removeOrdem, turnoFiltro, catalogoPecas }) {
   const ordensFiltradas = useMemo(
     () => (turnoFiltro === TURNO_TODOS ? ordens : ordens.filter((o) => o.turno === turnoFiltro)),
     [ordens, turnoFiltro]
@@ -33,7 +33,7 @@ export function OrdensTab({ ordens, addOrdem, updateOrdem, removeOrdem, turnoFil
   return (
     <>
       <NovaOrdemForm onAdd={addOrdem} />
-      <OrdensTable ordens={ordensFiltradas} onUpdate={updateOrdem} onRemove={removeOrdem} />
+      <OrdensTable ordens={ordensFiltradas} onUpdate={updateOrdem} onRemove={removeOrdem} catalogoPecas={catalogoPecas} />
       <ResumoOrdens
         titulo={titulo}
         totalOrdens={totalOrdens}

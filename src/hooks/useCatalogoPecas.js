@@ -8,7 +8,7 @@ export function useCatalogoPecas() {
   const [pecas, setPecas] = useState([]);
   const [busca, setBusca] = useState("");
 
-  function addPeca({ codigo, descricao, imagens, caixa, qtdPorCaixa }) {
+  function addPeca({ codigo, descricao, imagens, caixa, qtdPorCaixa, cliente, composicao }) {
     if (!codigo.trim()) return { ok: false, error: "Informe o número/código da peça." };
 
     const qtd = parseInt(qtdPorCaixa, 10);
@@ -18,6 +18,8 @@ export function useCatalogoPecas() {
         id: Date.now(),
         codigo: codigo.trim().toUpperCase(),
         descricao: (descricao || "").trim(),
+        cliente: (cliente || "").trim(),
+        composicao: (composicao || "").trim(),
         imagens: Array.isArray(imagens) ? imagens.filter(Boolean) : [],
         caixa: (caixa || "").trim(),
         qtdPorCaixa: !isNaN(qtd) && qtd > 0 ? qtd : null,
@@ -36,7 +38,11 @@ export function useCatalogoPecas() {
     const q = busca.trim().toLowerCase();
     if (!q) return pecas;
     return pecas.filter(
-      (p) => p.codigo.toLowerCase().includes(q) || p.descricao.toLowerCase().includes(q)
+      (p) =>
+        p.codigo.toLowerCase().includes(q) ||
+        p.descricao.toLowerCase().includes(q) ||
+        (p.cliente || "").toLowerCase().includes(q) ||
+        (p.composicao || "").toLowerCase().includes(q)
     );
   }, [pecas, busca]);
 

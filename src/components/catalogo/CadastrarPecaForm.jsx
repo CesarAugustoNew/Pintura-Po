@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { ImagePlus, Package, Plus, X } from "lucide-react";
 
-const EMPTY_FORM = { codigo: "", descricao: "", imagens: [], caixa: "", qtdPorCaixa: "" };
+const EMPTY_FORM = {
+  codigo: "",
+  descricao: "",
+  cliente: "",
+  composicao: "",
+  imagens: [],
+  caixa: "",
+  qtdPorCaixa: "",
+};
 
 export function CadastrarPecaForm({ onAdd }) {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -85,14 +93,34 @@ export function CadastrarPecaForm({ onAdd }) {
         </div>
 
         <div className="ptk-cadastro-fields">
-          <div>
-            <label className="ptk-label">Número / código da peça</label>
-            <input
-              className="ptk-input"
-              value={form.codigo}
-              onChange={(e) => updateField("codigo", e.target.value.toUpperCase())}
-              placeholder="Ex: PC-204"
-            />
+          <div className="ptk-form-grid">
+            <div style={{ maxWidth: "150px" }}>
+              <label className="ptk-label">Código da peça</label>
+              <input
+                className="ptk-input"
+                value={form.codigo}
+                onChange={(e) => updateField("codigo", e.target.value.toUpperCase())}
+                placeholder="Ex: PC-204"
+              />
+            </div>
+            <div>
+              <label className="ptk-label">Cliente</label>
+              <input
+                className="ptk-input"
+                value={form.cliente}
+                onChange={(e) => updateField("cliente", e.target.value)}
+                placeholder="Ex: Volvo"
+              />
+            </div>
+            <div>
+              <label className="ptk-label">Composição</label>
+              <input
+                className="ptk-input"
+                value={form.composicao}
+                onChange={(e) => updateField("composicao", e.target.value)}
+                placeholder="Ex: Pó preto MBB"
+              />
+            </div>
           </div>
           <div>
             <label className="ptk-label">Descrição (opcional)</label>

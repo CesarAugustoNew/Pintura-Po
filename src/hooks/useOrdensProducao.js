@@ -23,18 +23,31 @@ import { getTurnoPorHorario } from "../utils/turnos";
 export function useOrdensProducao(lancamentos = [], turnoAtivo) {
   const [ordens, setOrdens] = useState([]);
 
-  function validar({ peca, lote, quantidade }) {
+  function validar({ peca, lote, quantidade, quantidadeEmProcesso }) {
     if (!peca.trim()) return { ok: false, error: "Informe o número/modelo da peça." };
     if (!lote.trim()) return { ok: false, error: "Informe o lote." };
     const qtd = Number(quantidade);
     if (!quantidade || isNaN(qtd) || qtd <= 0) {
       return { ok: false, error: "Informe a quantidade a enviar." };
     }
+    if (quantidadeEmProcesso !== "" && quantidadeEmProcesso !== undefined && quantidadeEmProcesso !== null) {
+      const qtdProcesso = Number(quantidadeEmProcesso);
+      if (isNaN(qtdProcesso) || qtdProcesso < 0) {
+        return { ok: false, error: "Qtde em processo inválida." };
+      }
+    }
     return { ok: true };
   }
 
-  function addOrdem({ peca, lote, quantidade, prioridade, horarioSaida }) {
-    const result = validar({ peca, lote, quantidade });
+  function parseQtdEmProcesso(quantidadeEmProcesso) {
+    if (quantidadeEmProcesso === "" || quantidadeEmProcesso === undefined || quantidadeEmProcesso === null) {
+      return null;
+    }
+    return Number(quantidadeEmProcesso);
+  }
+
+  function addOrdem({ peca, lote, quantidade, prioridade, horarioSaida, quantidadeEmProcesso }) {
+    const result = validar({ peca, lote, quantidade, quantidadeEmProcesso });
     if (!result.ok) return result;
 
     const turno = getTurnoPorHorario(horarioSaida) || turnoAtivo;
@@ -45,6 +58,7 @@ export function useOrdensProducao(lancamentos = [], turnoAtivo) {
         peca: peca.trim().toUpperCase(),
         lote: lote.trim().toUpperCase(),
         quantidade: Number(quantidade),
+        quantidadeEmProcesso: parseQtdEmProcesso(quantidadeEmProcesso),
         prioridade: !!prioridade,
         horarioSaida: horarioSaida || "",
         turno,
@@ -56,8 +70,8 @@ export function useOrdensProducao(lancamentos = [], turnoAtivo) {
     return { ok: true };
   }
 
-  function updateOrdem(id, { peca, lote, quantidade, prioridade, horarioSaida }) {
-    const result = validar({ peca, lote, quantidade });
+  function updateOrdem(id, { peca, lote, quantidade, prioridade, horarioSaida, quantidadeEmProcesso }) {
+    const result = validar({ peca, lote, quantidade, quantidadeEmProcesso });
     if (!result.ok) return result;
 
     const turno = getTurnoPorHorario(horarioSaida) || turnoAtivo;
@@ -70,6 +84,7 @@ export function useOrdensProducao(lancamentos = [], turnoAtivo) {
               peca: peca.trim().toUpperCase(),
               lote: lote.trim().toUpperCase(),
               quantidade: Number(quantidade),
+              quantidadeEmProcesso: parseQtdEmProcesso(quantidadeEmProcesso),
               prioridade: !!prioridade,
               horarioSaida: horarioSaida || "",
               turno,

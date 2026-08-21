@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Plus, Star, Truck } from "lucide-react";
 
-const EMPTY_FORM = { peca: "", lote: "", quantidade: "", prioridade: false, horarioSaida: "" };
+const EMPTY_FORM = {
+  peca: "",
+  lote: "",
+  quantidade: "",
+  prioridade: false,
+  horarioSaida: "",
+  quantidadeEmProcesso: "",
+};
 
 export function NovaOrdemForm({ onAdd }) {
   const [form, setForm] = useState(EMPTY_FORM);
@@ -27,7 +34,8 @@ export function NovaOrdemForm({ onAdd }) {
         <Truck size={16} color="var(--accent-2)" /> Nova ordem de produção
       </h2>
       <p className="ptk-sub" style={{ marginTop: "-6px", marginBottom: "16px" }}>
-        Registre a peça, o lote e a quantidade combinada para enviar hoje, se é prioridade e, se quiser, o horário de saída.
+        Registre a peça, o lote, a quantidade combinada para enviar hoje, o horário de saída e quanto já está em
+        processo (estoque). Cliente e composição são puxados automaticamente do cadastro da peça.
       </p>
 
       <div className="ptk-form-grid">
@@ -67,6 +75,17 @@ export function NovaOrdemForm({ onAdd }) {
             type="time"
             value={form.horarioSaida}
             onChange={(e) => updateField("horarioSaida", e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="ptk-label">Qtde em processo (opcional)</label>
+          <input
+            className="ptk-input"
+            type="number"
+            min="0"
+            value={form.quantidadeEmProcesso}
+            onChange={(e) => updateField("quantidadeEmProcesso", e.target.value)}
+            placeholder="Ex: 150"
           />
         </div>
         <div>
