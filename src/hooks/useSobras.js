@@ -17,8 +17,8 @@ export function useSobras() {
     setSobras((prev) => [
       {
         id: Date.now(),
-        peca: peca.trim(),
-        lote: lote.trim(),
+        peca: peca.trim().toUpperCase(),
+        lote: lote.trim().toUpperCase(),
         quantidade: qtd,
         observacao: observacao.trim(),
         data: new Date(),
@@ -38,7 +38,13 @@ export function useSobras() {
     setSobras((prev) =>
       prev.map((s) =>
         s.id === id
-          ? { ...s, peca: peca.trim(), lote: lote.trim(), quantidade: qtd, observacao: observacao.trim() }
+          ? {
+              ...s,
+              peca: peca.trim().toUpperCase(),
+              lote: lote.trim().toUpperCase(),
+              quantidade: qtd,
+              observacao: observacao.trim(),
+            }
           : s
       )
     );

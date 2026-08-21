@@ -56,7 +56,7 @@ export default function App() {
             <LancamentosTab {...lancamentos} catalogoPecas={catalogo.pecas} turnoFiltro={turnoSelecionado} />
           </div>
           <div style={{ display: activeTab === "ordens" ? "contents" : "none" }}>
-            <OrdensTab {...ordens} turnoFiltro={turnoSelecionado} />
+            <OrdensTab {...ordens} turnoFiltro={turnoSelecionado} catalogoPecas={catalogo.pecas} />
           </div>
           <div style={{ display: activeTab === "sobras" ? "contents" : "none" }}>
             <SobrasTab {...sobras} catalogoPecas={catalogo.pecas} />

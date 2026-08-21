@@ -36,7 +36,7 @@ export function NovoSobraForm({ onAdd }) {
           <input
             className="ptk-input"
             value={form.peca}
-            onChange={(e) => updateField("peca", e.target.value)}
+            onChange={(e) => updateField("peca", e.target.value.toUpperCase())}
             placeholder="Ex: PC-204"
           />
         </div>
@@ -45,7 +45,7 @@ export function NovoSobraForm({ onAdd }) {
           <input
             className="ptk-input"
             value={form.lote}
-            onChange={(e) => updateField("lote", e.target.value)}
+            onChange={(e) => updateField("lote", e.target.value.toUpperCase())}
             placeholder="Ex: L-0731"
           />
         </div>
