@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, ListChecks, Pencil, Trash2, X } from "lucide-react";
-import { formatDatePtBr } from "../../utils/date";
+import { formatDateNumeric } from "../../utils/date";
 import { calcularDuracaoMinutos, formatDuracao } from "../../utils/paradas";
 import { useConfirm } from "../common/ConfirmDialogProvider";
 import { TurnoBadge } from "../common/TurnoBadge";
@@ -116,7 +116,7 @@ export function ParadasTable({ paradas, onUpdate, onRemove, titulo = "Paradas re
                         {duracao !== null && duracao > 0 ? formatDuracao(duracao) : "—"}
                       </td>
                       <td className="ptk-mono" style={{ color: "var(--muted)" }}>
-                        {formatDatePtBr(p.data)}
+                        {formatDateNumeric(p.data)}
                       </td>
                       <td>
                         <div style={{ display: "flex", gap: "4px" }}>
@@ -142,7 +142,7 @@ export function ParadasTable({ paradas, onUpdate, onRemove, titulo = "Paradas re
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{p.horaInicio}</td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{p.horaFim}</td>
                     <td className="ptk-mono" style={{ color: "var(--accent)" }}>{formatDuracao(p.duracaoMinutos)}</td>
-                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDatePtBr(p.data)}</td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDateNumeric(p.data)}</td>
                     <td>
                       <div style={{ display: "flex", gap: "4px" }}>
                         <button className="ptk-remove" onClick={() => startEdit(p)} aria-label="Editar parada">
