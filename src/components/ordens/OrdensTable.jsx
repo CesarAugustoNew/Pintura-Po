@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, ClipboardList, Pencil, Star, Trash2, X } from "lucide-react";
-import { formatDatePtBr } from "../../utils/date";
+import { formatDateNumeric } from "../../utils/date";
 import { getStatusOrdem, STATUS_LABELS } from "../../utils/ordens";
 import { useConfirm } from "../common/ConfirmDialogProvider";
 import { TurnoBadge } from "../common/TurnoBadge";
@@ -18,6 +18,18 @@ function toEditForm(ordem) {
 
 function buscarNoCatalogo(codigo, catalogoPecas) {
   return catalogoPecas.find((p) => p.codigo.toLowerCase() === codigo.toLowerCase());
+}
+
+function EmbalagemInfo({ pecaCatalogo }) {
+  if (!pecaCatalogo || (!pecaCatalogo.caixa && !pecaCatalogo.qtdPorCaixa)) {
+    return <span style={{ color: "var(--muted)" }}>—</span>;
+  }
+  return (
+    <span className="ptk-mono" style={{ color: "var(--muted)" }}>
+      {pecaCatalogo.caixa || "Caixa —"}
+      {pecaCatalogo.qtdPorCaixa ? ` · ${pecaCatalogo.qtdPorCaixa}/cx` : ""}
+    </span>
+  );
 }
 
 function StatusBadge({ ordem }) {
@@ -88,6 +100,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
                 <th>Peça</th>
                 <th>Cliente</th>
                 <th>Composição</th>
+                <th>Embalagem</th>
                 <th>Lote</th>
                 <th>Meta</th>
                 <th>Produzido</th>
@@ -137,6 +150,9 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
                         {pecaCatalogo?.composicao || "—"}
                       </td>
                       <td>
+                        <EmbalagemInfo pecaCatalogo={pecaCatalogo} />
+                      </td>
+                      <td>
                         <input
                           className="ptk-input ptk-input-cell"
                           value={editForm.lote}
@@ -175,7 +191,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
                         />
                       </td>
                       <td className="ptk-mono" style={{ color: "var(--muted)" }}>
-                        {formatDatePtBr(o.data)}
+                        {formatDateNumeric(o.data)}
                       </td>
                       <td>
                         <div style={{ display: "flex", gap: "4px" }}>
@@ -199,8 +215,8 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
                   <tr key={o.id}>
                     <td>
                       {o.prioridade && (
-                        <span className="ptk-priority-badge" title="Prioridade">
-                          <Star size={12} fill="currentColor" /> Prioridade
+                        <span className="ptk-priority-icon" title="Prioridade">
+                          <Star size={15} fill="currentColor" />
                         </span>
                       )}
                     </td>
@@ -213,6 +229,9 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
                     </td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>
                       {pecaCatalogo?.composicao || "—"}
+                    </td>
+                    <td>
+                      <EmbalagemInfo pecaCatalogo={pecaCatalogo} />
                     </td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{o.lote}</td>
                     <td className="ptk-mono">{o.quantidade}</td>
@@ -230,7 +249,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>
                       {o.quantidadeEmProcesso !== null ? o.quantidadeEmProcesso : "—"}
                     </td>
-                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDatePtBr(o.data)}</td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDateNumeric(o.data)}</td>
                     <td>
                       <div style={{ display: "flex", gap: "4px" }}>
                         <button className="ptk-remove" onClick={() => startEdit(o)} aria-label="Editar ordem">

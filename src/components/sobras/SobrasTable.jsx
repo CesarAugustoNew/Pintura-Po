@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Check, Layers3, Pencil, Trash2, X } from "lucide-react";
-import { formatDatePtBr } from "../../utils/date";
+import { formatDateNumeric } from "../../utils/date";
 import { useConfirm } from "../common/ConfirmDialogProvider";
 
 function toEditForm(sobra) {
@@ -112,7 +112,7 @@ export function SobrasTable({ sobras, onUpdate, onRemove }) {
                         />
                       </td>
                       <td className="ptk-mono" style={{ color: "var(--muted)" }}>
-                        {formatDatePtBr(s.data)}
+                        {formatDateNumeric(s.data)}
                       </td>
                       <td>
                         <div style={{ display: "flex", gap: "4px" }}>
@@ -135,7 +135,7 @@ export function SobrasTable({ sobras, onUpdate, onRemove }) {
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{s.lote || "—"}</td>
                     <td className="ptk-mono" style={{ color: "var(--accent)" }}>{s.quantidade}</td>
                     <td>{s.observacao || <span style={{ color: "var(--muted)" }}>—</span>}</td>
-                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDatePtBr(s.data)}</td>
+                    <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDateNumeric(s.data)}</td>
                     <td>
                       <div style={{ display: "flex", gap: "4px" }}>
                         <button className="ptk-remove" onClick={() => startEdit(s)} aria-label="Editar sobra">
