@@ -1,7 +1,7 @@
 import { BookOpen, Search } from "lucide-react";
 import { PecaCard } from "./PecaCard";
 
-export function PecasGrid({ pecas, pecasFiltradas, busca, onBuscaChange, onRemove }) {
+export function PecasGrid({ pecas, pecasFiltradas, busca, onBuscaChange, onRemove, readOnly = false }) {
   return (
     <div className="ptk-panel">
       <h2 className="ptk-panel-title">
@@ -24,7 +24,7 @@ export function PecasGrid({ pecas, pecasFiltradas, busca, onBuscaChange, onRemov
       ) : (
         <div className="ptk-grid">
           {pecasFiltradas.map((p) => (
-            <PecaCard key={p.id} peca={p} onRemove={onRemove} />
+            <PecaCard key={p.id} peca={p} onRemove={onRemove} readOnly={readOnly} />
           ))}
         </div>
       )}

@@ -1,62 +1,84 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { listSobras, createSobra, updateSobra, removeSobra } from "../api/sobras";
 
 /**
- * Centraliza o estado e as regras de negócio das sobras:
- * peças que sobraram (não fecharam barra, saíram de lote, etc.)
- * e ficam registradas à parte pra não se perder o controle delas.
+ * Centraliza o estado das sobras, sincronizado com a API.
  */
+function mapApiToUi(item) {
+  return { ...item, data: new Date(item.data) };
+}
+
+function toApiPayload(form) {
+  return {
+    peca: form.peca || "",
+    lote: form.lote || "",
+    quantidade: form.quantidade !== "" ? Number(form.quantidade) : null,
+    observacao: form.observacao || "",
+  };
+}
+
 export function useSobras() {
   const [sobras, setSobras] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [erroCarregamento, setErroCarregamento] = useState("");
 
-  function addSobra({ peca, lote, quantidade, observacao }) {
-    if (!peca.trim()) return { ok: false, error: "Informe o número/modelo da peça." };
-
-    const qtd = parseInt(quantidade, 10);
-    if (isNaN(qtd) || qtd < 1) return { ok: false, error: "Informe a quantidade de sobra." };
-
-    setSobras((prev) => [
-      {
-        id: Date.now(),
-        peca: peca.trim().toUpperCase(),
-        lote: lote.trim().toUpperCase(),
-        quantidade: qtd,
-        observacao: observacao.trim(),
-        data: new Date(),
-      },
-      ...prev,
-    ]);
-
-    return { ok: true };
+  async function carregar() {
+    setLoading(true);
+    try {
+      const data = await listSobras();
+      setSobras(data.map(mapApiToUi));
+      setErroCarregamento("");
+    } catch (e) {
+      setErroCarregamento(e.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function updateSobra(id, { peca, lote, quantidade, observacao }) {
-    if (!peca.trim()) return { ok: false, error: "Informe o número/modelo da peça." };
+  useEffect(() => {
+    carregar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    const qtd = parseInt(quantidade, 10);
-    if (isNaN(qtd) || qtd < 1) return { ok: false, error: "Informe a quantidade de sobra." };
-
-    setSobras((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? {
-              ...s,
-              peca: peca.trim().toUpperCase(),
-              lote: lote.trim().toUpperCase(),
-              quantidade: qtd,
-              observacao: observacao.trim(),
-            }
-          : s
-      )
-    );
-
-    return { ok: true };
+  async function addSobra(form) {
+    try {
+      const created = await createSobra(toApiPayload(form));
+      setSobras((prev) => [mapApiToUi(created), ...prev]);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
-  function removeSobra(id) {
-    setSobras((prev) => prev.filter((s) => s.id !== id));
+  async function updateSobraFn(id, form) {
+    try {
+      const updated = await updateSobra(id, toApiPayload(form));
+      setSobras((prev) => prev.map((s) => (s.id === id ? mapApiToUi(updated) : s)));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
+
+  async function removeSobraFn(id) {
+    try {
+      await removeSobra(id);
+      setSobras((prev) => prev.filter((s) => s.id !== id));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
   const totalSobras = useMemo(() => sobras.reduce((s, e) => s + e.quantidade, 0), [sobras]);
 
-  return { sobras, addSobra, updateSobra, removeSobra, totalSobras };
+  return {
+    sobras,
+    addSobra,
+    updateSobra: updateSobraFn,
+    removeSobra: removeSobraFn,
+    totalSobras,
+    loading,
+    erroCarregamento,
+  };
 }

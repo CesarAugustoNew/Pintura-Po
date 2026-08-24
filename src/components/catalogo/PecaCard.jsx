@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ImagePlus, Package, X } from "lucide-react";
 import { useConfirm } from "../common/ConfirmDialogProvider";
 
-export function PecaCard({ peca, onRemove }) {
+export function PecaCard({ peca, onRemove, readOnly = false }) {
   const confirm = useConfirm();
   const imagens = peca.imagens || [];
   const [activeIndex, setActiveIndex] = useState(0);
@@ -12,7 +12,7 @@ export function PecaCard({ peca, onRemove }) {
       title: "Remover peça do catálogo?",
       message: `A peça ${peca.codigo} e sua embalagem cadastrada serão removidas. Essa ação não pode ser desfeita.`,
     });
-    if (ok) onRemove(peca.id);
+    if (ok) await onRemove(peca.id);
   }
 
   return (
@@ -55,11 +55,13 @@ export function PecaCard({ peca, onRemove }) {
           </div>
         )}
       </div>
-      <div className="ptk-card-footer">
-        <button className="ptk-remove" onClick={handleRemove} aria-label="Remover peça">
-          <X size={15} />
-        </button>
-      </div>
+      {!readOnly && (
+        <div className="ptk-card-footer">
+          <button className="ptk-remove" onClick={handleRemove} aria-label="Remover peça">
+            <X size={15} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

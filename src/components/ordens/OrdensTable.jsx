@@ -39,13 +39,14 @@ function StatusBadge({ ordem }) {
   );
 }
 
-export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) {
+export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [], readOnly = false }) {
   const confirm = useConfirm();
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(null);
   const [editError, setEditError] = useState("");
 
   function startEdit(ordem) {
+    if (readOnly) return;
     setEditingId(ordem.id);
     setEditForm(toEditForm(ordem));
     setEditError("");
@@ -62,8 +63,8 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
     if (editError) setEditError("");
   }
 
-  function saveEdit(id) {
-    const result = onUpdate(id, editForm);
+  async function saveEdit(id) {
+    const result = await onUpdate(id, editForm);
     if (!result.ok) {
       setEditError(result.error);
       return;
@@ -76,7 +77,7 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
       title: "Remover ordem de produção?",
       message: `A ordem de ${ordem.peca} (lote ${ordem.lote}) será removida. Essa ação não pode ser desfeita.`,
     });
-    if (ok) onRemove(ordem.id);
+    if (ok) await onRemove(ordem.id);
   }
 
   return (
@@ -251,14 +252,16 @@ export function OrdensTable({ ordens, onUpdate, onRemove, catalogoPecas = [] }) 
                     </td>
                     <td className="ptk-mono" style={{ color: "var(--muted)" }}>{formatDateNumeric(o.data)}</td>
                     <td>
-                      <div style={{ display: "flex", gap: "4px" }}>
-                        <button className="ptk-remove" onClick={() => startEdit(o)} aria-label="Editar ordem">
-                          <Pencil size={15} />
-                        </button>
-                        <button className="ptk-remove" onClick={() => handleRemove(o)} aria-label="Remover ordem">
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
+                      {!readOnly && (
+                        <div style={{ display: "flex", gap: "4px" }}>
+                          <button className="ptk-remove" onClick={() => startEdit(o)} aria-label="Editar ordem">
+                            <Pencil size={15} />
+                          </button>
+                          <button className="ptk-remove" onClick={() => handleRemove(o)} aria-label="Remover ordem">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 );

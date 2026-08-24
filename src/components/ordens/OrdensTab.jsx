@@ -4,8 +4,10 @@ import { OrdensTable } from "./OrdensTable";
 import { ResumoOrdens } from "./ResumoOrdens";
 import { TURNO_TODOS } from "../../constants";
 import { getTurnoLabel } from "../../utils/turnos";
+import { useAuth } from "../../context/AuthContext";
 
 export function OrdensTab({ ordens, addOrdem, updateOrdem, removeOrdem, turnoFiltro, catalogoPecas }) {
+  const { isAdmin } = useAuth();
   const ordensFiltradas = useMemo(
     () => (turnoFiltro === TURNO_TODOS ? ordens : ordens.filter((o) => o.turno === turnoFiltro)),
     [ordens, turnoFiltro]
@@ -32,8 +34,22 @@ export function OrdensTab({ ordens, addOrdem, updateOrdem, removeOrdem, turnoFil
 
   return (
     <>
-      <NovaOrdemForm onAdd={addOrdem} />
-      <OrdensTable ordens={ordensFiltradas} onUpdate={updateOrdem} onRemove={removeOrdem} catalogoPecas={catalogoPecas} />
+      {isAdmin && <NovaOrdemForm onAdd={addOrdem} />}
+      {!isAdmin && (
+        <div className="ptk-panel">
+          <p className="ptk-sub" style={{ margin: 0 }}>
+            Somente administradores podem criar, editar ou remover ordens de produção. Você pode
+            acompanhar o andamento abaixo.
+          </p>
+        </div>
+      )}
+      <OrdensTable
+        ordens={ordensFiltradas}
+        onUpdate={updateOrdem}
+        onRemove={removeOrdem}
+        catalogoPecas={catalogoPecas}
+        readOnly={!isAdmin}
+      />
       <ResumoOrdens
         titulo={titulo}
         totalOrdens={totalOrdens}

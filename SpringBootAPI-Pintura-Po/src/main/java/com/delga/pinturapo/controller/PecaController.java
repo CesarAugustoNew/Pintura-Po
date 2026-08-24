@@ -5,10 +5,15 @@ import com.delga.pinturapo.entity.Peca;
 import com.delga.pinturapo.service.PecaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Qualquer usuário autenticado pode consultar (GET) o catálogo. Cadastrar
+ * e remover peças é restrito ao ADMIN — o OPERADOR só consulta.
+ */
 @RestController
 @RequestMapping("/api/pecas")
 @RequiredArgsConstructor
@@ -23,12 +28,14 @@ public class PecaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public Peca create(@RequestBody PecaRequest request) {
         return service.create(request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

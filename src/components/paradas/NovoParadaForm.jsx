@@ -12,8 +12,8 @@ export function NovoParadaForm({ onAdd }) {
     if (error) setError("");
   }
 
-  function handleAdd() {
-    const result = onAdd(form);
+  async function handleAdd() {
+    const result = await onAdd(form);
     if (!result.ok) {
       setError(result.error);
       return;

@@ -8,6 +8,8 @@ import { SobrasTab } from "./components/sobras/SobrasTab";
 import { CatalogoTab } from "./components/catalogo/CatalogoTab";
 import { ParadasTab } from "./components/paradas/ParadasTab";
 import { ConfirmDialogProvider } from "./components/common/ConfirmDialogProvider";
+import { LoginScreen } from "./components/auth/LoginScreen";
+import { useAuth } from "./context/AuthContext";
 import { useLancamentos } from "./hooks/useLancamentos";
 import { useOrdensProducao } from "./hooks/useOrdensProducao";
 import { useSobras } from "./hooks/useSobras";
@@ -19,6 +21,7 @@ import "./styles/theme.css";
 import "./styles/catalogo.css";
 
 export default function App() {
+  const { isAuthenticated, initializing } = useAuth();
   const [activeTab, setActiveTab] = useState("lancamentos");
   const today = useMemo(() => new Date(), []);
 
@@ -32,7 +35,8 @@ export default function App() {
 
   // Os hooks de estado ficam aqui, no componente raiz, que nunca é
   // desmontado. Assim os dados de cada aba sobrevivem quando o usuário
-  // navega para outra aba e volta depois.
+  // navega para outra aba e volta depois. Cada hook busca e sincroniza
+  // seus dados com a API automaticamente.
   const lancamentos = useLancamentos(turnoParaNovosRegistros);
   const ordens = useOrdensProducao(lancamentos.entries, turnoParaNovosRegistros);
   const sobras = useSobras();
@@ -40,6 +44,14 @@ export default function App() {
   const paradas = useParadas(turnoParaNovosRegistros);
 
   const mostraTurnoSwitcher = activeTab === "lancamentos" || activeTab === "ordens" || activeTab === "paradas";
+
+  if (initializing) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
 
   return (
     <div className="ptk-wrap">

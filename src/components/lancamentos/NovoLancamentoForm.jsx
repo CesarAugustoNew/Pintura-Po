@@ -50,8 +50,8 @@ export function NovoLancamentoForm({ onAdd }) {
         : qtd * previewBarras
       : 0;
 
-  function handleAdd() {
-    const result = onAdd(form);
+  async function handleAdd() {
+    const result = await onAdd(form);
     if (!result.ok) {
       setError(result.error);
       return;

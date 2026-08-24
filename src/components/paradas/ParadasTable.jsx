@@ -32,8 +32,8 @@ export function ParadasTable({ paradas, onUpdate, onRemove, titulo = "Paradas re
     if (editError) setEditError("");
   }
 
-  function saveEdit(id) {
-    const result = onUpdate(id, editForm);
+  async function saveEdit(id) {
+    const result = await onUpdate(id, editForm);
     if (!result.ok) {
       setEditError(result.error);
       return;
@@ -46,7 +46,7 @@ export function ParadasTable({ paradas, onUpdate, onRemove, titulo = "Paradas re
       title: "Remover parada?",
       message: `A parada "${parada.motivo}" será removida. Essa ação não pode ser desfeita.`,
     });
-    if (ok) onRemove(parada.id);
+    if (ok) await onRemove(parada.id);
   }
 
   function previewDuracao(form) {
