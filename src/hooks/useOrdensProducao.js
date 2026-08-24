@@ -1,139 +1,94 @@
-import { useMemo, useState } from "react";
-import { getTurnoPorHorario } from "../utils/turnos";
+import { useEffect, useState } from "react";
+import { listOrdens, createOrdem, updateOrdem, removeOrdem } from "../api/ordens";
 
 /**
- * Centraliza o estado e as regras de negócio da ordem de produção do dia:
- * quais peças/lotes precisam sair, a quantidade combinada (meta) e se são
- * prioridade. A quantidade já produzida é abatida automaticamente pelos
- * lançamentos de pintura da mesma peça E do mesmo turno da ordem — o lote
- * do lançamento não precisa bater com o lote da ordem (a mesma peça pode
- * ser pintada em lotes diferentes e tudo conta pra mesma meta), mas o
- * turno precisa, já que cada turno tem sua própria ordem de produção,
- * independente dos outros turnos (sem contar setups, que não têm peça de
- * verdade). Assim que o lançamento é feito, a ordem soma a produção e vai
- * ficando mais perto de "concluída" sozinha, sem precisar registrar nada
- * manualmente.
- *
- * Assim como os lançamentos, o turno de cada ordem é calculado a partir do
- * horário de saída; se ficar em branco, usa `turnoAtivo` como padrão.
- *
- * A lista fica sempre ordenada com as prioridades no topo e, dentro de
- * cada grupo, pelo horário de saída.
+ * Centraliza o estado da ordem de produção do dia, sincronizado com a API.
+ * A quantidade já produzida (abatida automaticamente pelos lançamentos da
+ * mesma peça + mesmo turno) e a ordenação (prioridades no topo, depois por
+ * horário de saída) já vêm prontas do back-end — aqui só recarregamos a
+ * lista sempre que os lançamentos mudam, pra manter o "produzido" em dia.
  */
+function mapApiToUi(item) {
+  return { ...item, data: new Date(item.data) };
+}
+
+function toApiPayload(form) {
+  const temQtdProcesso =
+    form.quantidadeEmProcesso !== "" &&
+    form.quantidadeEmProcesso !== undefined &&
+    form.quantidadeEmProcesso !== null;
+
+  return {
+    peca: form.peca || "",
+    lote: form.lote || "",
+    quantidade: form.quantidade !== "" ? Number(form.quantidade) : null,
+    quantidadeEmProcesso: temQtdProcesso ? Number(form.quantidadeEmProcesso) : null,
+    prioridade: !!form.prioridade,
+    horarioSaida: form.horarioSaida || "",
+  };
+}
+
 export function useOrdensProducao(lancamentos = [], turnoAtivo) {
   const [ordens, setOrdens] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [erroCarregamento, setErroCarregamento] = useState("");
 
-  function validar({ peca, lote, quantidade, quantidadeEmProcesso }) {
-    if (!peca.trim()) return { ok: false, error: "Informe o número/modelo da peça." };
-    if (!lote.trim()) return { ok: false, error: "Informe o lote." };
-    const qtd = Number(quantidade);
-    if (!quantidade || isNaN(qtd) || qtd <= 0) {
-      return { ok: false, error: "Informe a quantidade a enviar." };
+  async function carregar() {
+    setLoading(true);
+    try {
+      const data = await listOrdens();
+      setOrdens(data.map(mapApiToUi));
+      setErroCarregamento("");
+    } catch (e) {
+      setErroCarregamento(e.message);
+    } finally {
+      setLoading(false);
     }
-    if (quantidadeEmProcesso !== "" && quantidadeEmProcesso !== undefined && quantidadeEmProcesso !== null) {
-      const qtdProcesso = Number(quantidadeEmProcesso);
-      if (isNaN(qtdProcesso) || qtdProcesso < 0) {
-        return { ok: false, error: "Qtde em processo inválida." };
-      }
-    }
-    return { ok: true };
   }
 
-  function parseQtdEmProcesso(quantidadeEmProcesso) {
-    if (quantidadeEmProcesso === "" || quantidadeEmProcesso === undefined || quantidadeEmProcesso === null) {
-      return null;
-    }
-    return Number(quantidadeEmProcesso);
-  }
-
-  function addOrdem({ peca, lote, quantidade, prioridade, horarioSaida, quantidadeEmProcesso }) {
-    const result = validar({ peca, lote, quantidade, quantidadeEmProcesso });
-    if (!result.ok) return result;
-
-    const turno = getTurnoPorHorario(horarioSaida) || turnoAtivo;
-
-    setOrdens((prev) => [
-      {
-        id: Date.now(),
-        peca: peca.trim().toUpperCase(),
-        lote: lote.trim().toUpperCase(),
-        quantidade: Number(quantidade),
-        quantidadeEmProcesso: parseQtdEmProcesso(quantidadeEmProcesso),
-        prioridade: !!prioridade,
-        horarioSaida: horarioSaida || "",
-        turno,
-        data: new Date(),
-      },
-      ...prev,
-    ]);
-
-    return { ok: true };
-  }
-
-  function updateOrdem(id, { peca, lote, quantidade, prioridade, horarioSaida, quantidadeEmProcesso }) {
-    const result = validar({ peca, lote, quantidade, quantidadeEmProcesso });
-    if (!result.ok) return result;
-
-    const turno = getTurnoPorHorario(horarioSaida) || turnoAtivo;
-
-    setOrdens((prev) =>
-      prev.map((o) =>
-        o.id === id
-          ? {
-              ...o,
-              peca: peca.trim().toUpperCase(),
-              lote: lote.trim().toUpperCase(),
-              quantidade: Number(quantidade),
-              quantidadeEmProcesso: parseQtdEmProcesso(quantidadeEmProcesso),
-              prioridade: !!prioridade,
-              horarioSaida: horarioSaida || "",
-              turno,
-            }
-          : o
-      )
-    );
-
-    return { ok: true };
-  }
-
-  function removeOrdem(id) {
-    setOrdens((prev) => prev.filter((o) => o.id !== id));
-  }
-
-  // Soma, por turno + peça, tudo que já foi lançado (ignorando setups, que
-  // não representam peça nenhuma). O lote do lançamento pode ser diferente
-  // do lote da ordem, mas o turno tem que ser o mesmo.
-  const produzidoPorTurnoPeca = useMemo(() => {
-    const map = new Map();
-    lancamentos
-      .filter((l) => !l.isSetup)
-      .forEach((l) => {
-        const chave = `${l.turno}::${l.peca}`;
-        map.set(chave, (map.get(chave) || 0) + l.totalPecas);
-      });
-    return map;
+  // Recarrega sempre que os lançamentos mudam (novo lançamento pode abater
+  // a quantidade produzida de alguma ordem), além de uma vez ao montar.
+  useEffect(() => {
+    carregar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lancamentos]);
 
-  // Ordens já com a quantidade produzida abatida automaticamente.
-  const ordensComProducao = useMemo(() => {
-    return ordens.map((o) => ({
-      ...o,
-      quantidadeProduzida: produzidoPorTurnoPeca.get(`${o.turno}::${o.peca}`) || 0,
-    }));
-  }, [ordens, produzidoPorTurnoPeca]);
+  async function addOrdem(form) {
+    try {
+      const created = await createOrdem({ ...toApiPayload(form), turnoAtivo });
+      await carregar();
+      return { ok: true, created };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
 
-  // Prioridade primeiro; dentro do mesmo grupo, quem tem horário de saída
-  // definido vem em ordem crescente, e quem não tem fica por último
-  // (mantendo a ordem de registro entre eles).
-  const ordensOrdenadas = useMemo(() => {
-    return [...ordensComProducao].sort((a, b) => {
-      if (a.prioridade !== b.prioridade) return a.prioridade ? -1 : 1;
-      if (a.horarioSaida && b.horarioSaida) return a.horarioSaida.localeCompare(b.horarioSaida);
-      if (a.horarioSaida) return -1;
-      if (b.horarioSaida) return 1;
-      return 0;
-    });
-  }, [ordensComProducao]);
+  async function updateOrdemFn(id, form) {
+    try {
+      await updateOrdem(id, { ...toApiPayload(form), turnoAtivo });
+      await carregar();
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
 
-  return { ordens: ordensOrdenadas, addOrdem, updateOrdem, removeOrdem };
+  async function removeOrdemFn(id) {
+    try {
+      await removeOrdem(id);
+      setOrdens((prev) => prev.filter((o) => o.id !== id));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
+
+  return {
+    ordens,
+    addOrdem,
+    updateOrdem: updateOrdemFn,
+    removeOrdem: removeOrdemFn,
+    loading,
+    erroCarregamento,
+  };
 }

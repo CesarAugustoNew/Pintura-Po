@@ -1,42 +1,87 @@
-import { useState } from "react";
-import { validarECalcularLancamento } from "../utils/validarLancamento";
+import { useEffect, useState } from "react";
+import {
+  listLancamentos,
+  createLancamento,
+  updateLancamento,
+  removeLancamento,
+} from "../api/lancamentos";
 
 /**
- * Centraliza o estado e as regras de negócio dos lançamentos de barras:
- * validação e cálculo de barras usadas/total de peças.
- *
- * O turno de cada lançamento é calculado a partir do horário de início; se
- * ele ficar em branco, usa `turnoAtivo` (o turno selecionado no momento)
- * como padrão, então todo lançamento sempre acaba com um turno definido.
- * Os totais do dia/turno (peças, barras, por modelo) ficam por conta de
- * `calcularResumoLancamentos`, aplicada sobre a lista já filtrada por quem
- * usa este hook.
+ * Centraliza o estado dos lançamentos de barras, agora sincronizado com a
+ * API (PostgreSQL). A validação e os cálculos (barras usadas, total de
+ * peças, turno) são feitos no back-end; aqui só mapeamos a resposta da
+ * API pro formato que os componentes já esperam.
  */
+function mapApiToUi(item) {
+  return { ...item, data: new Date(item.data) };
+}
+
+function toApiPayload(form) {
+  const temUltimaParcial = form.qtdUltimaBarra !== "" && form.qtdUltimaBarra !== undefined;
+  return {
+    isSetup: !!form.isSetup,
+    peca: form.peca || "",
+    lote: form.lote || "",
+    qtdPorBarra: form.qtdPorBarra !== "" ? Number(form.qtdPorBarra) : null,
+    qtdUltimaBarra: temUltimaParcial ? Number(form.qtdUltimaBarra) : null,
+    barraInicial: form.barraInicial !== "" ? Number(form.barraInicial) : null,
+    barraFinal: form.barraFinal !== "" ? Number(form.barraFinal) : null,
+    horaInicio: form.horaInicio || "",
+  };
+}
+
 export function useLancamentos(turnoAtivo) {
   const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [erroCarregamento, setErroCarregamento] = useState("");
 
-  function addEntry(form) {
-    const result = validarECalcularLancamento(form, entries);
-    if (!result.ok) return result;
-
-    const turno = result.data.turno || turnoAtivo;
-    setEntries((prev) => [...prev, { id: Date.now(), ...result.data, turno }]);
-    return { ok: true };
+  async function carregar() {
+    setLoading(true);
+    try {
+      const data = await listLancamentos();
+      setEntries(data.map(mapApiToUi));
+      setErroCarregamento("");
+    } catch (e) {
+      setErroCarregamento(e.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function updateEntry(id, form) {
-    const outros = entries.filter((e) => e.id !== id);
-    const result = validarECalcularLancamento(form, outros);
-    if (!result.ok) return result;
+  useEffect(() => {
+    carregar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    const turno = result.data.turno || turnoAtivo;
-    setEntries((prev) => prev.map((e) => (e.id === id ? { id, ...result.data, turno } : e)));
-    return { ok: true };
+  async function addEntry(form) {
+    try {
+      const created = await createLancamento({ ...toApiPayload(form), turnoAtivo });
+      setEntries((prev) => [mapApiToUi(created), ...prev]);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
-  function removeEntry(id) {
-    setEntries((prev) => prev.filter((e) => e.id !== id));
+  async function updateEntry(id, form) {
+    try {
+      const updated = await updateLancamento(id, { ...toApiPayload(form), turnoAtivo });
+      setEntries((prev) => prev.map((e) => (e.id === id ? mapApiToUi(updated) : e)));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
-  return { entries, addEntry, updateEntry, removeEntry };
+  async function removeEntry(id) {
+    try {
+      await removeLancamento(id);
+      setEntries((prev) => prev.filter((e) => e.id !== id));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  }
+
+  return { entries, addEntry, updateEntry, removeEntry, loading, erroCarregamento, recarregar: carregar };
 }

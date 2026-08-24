@@ -46,8 +46,8 @@ export function CadastrarPecaForm({ onAdd }) {
     setForm((f) => ({ ...f, imagens: f.imagens.filter((_, i) => i !== index) }));
   }
 
-  function handleAdd() {
-    const result = onAdd(form);
+  async function handleAdd() {
+    const result = await onAdd(form);
     if (!result.ok) {
       setError(result.error);
       return;

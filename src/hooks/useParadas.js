@@ -1,72 +1,81 @@
-import { useState } from "react";
-import { calcularDuracaoMinutos } from "../utils/paradas";
-import { getTurnoPorHorario } from "../utils/turnos";
+import { useEffect, useState } from "react";
+import { listParadas, createParada, updateParada, removeParada } from "../api/paradas";
 
 /**
- * Centraliza o estado e as regras de negócio das paradas de produção:
- * motivo, horário de início/fim e duração calculada automaticamente.
- *
- * Assim como os lançamentos, o turno da parada é calculado a partir do
- * horário de início; se por algum motivo não der pra calcular, usa
- * `turnoAtivo` (o turno selecionado no momento) como padrão.
+ * Centraliza o estado das paradas de produção, sincronizado com a API.
+ * A duração e o turno são calculados no back-end a partir dos horários.
  */
+function mapApiToUi(item) {
+  return { ...item, data: new Date(item.data) };
+}
+
+function toApiPayload(form) {
+  return {
+    motivo: form.motivo || "",
+    horaInicio: form.horaInicio || "",
+    horaFim: form.horaFim || "",
+  };
+}
+
 export function useParadas(turnoAtivo) {
   const [paradas, setParadas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [erroCarregamento, setErroCarregamento] = useState("");
 
-  function validar({ motivo, horaInicio, horaFim }) {
-    if (!motivo.trim()) return { ok: false, error: "Informe o motivo da parada." };
-    if (!horaInicio) return { ok: false, error: "Informe o horário de início da parada." };
-    if (!horaFim) return { ok: false, error: "Informe o horário de fim da parada." };
-
-    const duracaoMinutos = calcularDuracaoMinutos(horaInicio, horaFim);
-    if (duracaoMinutos === null || duracaoMinutos <= 0)
-      return { ok: false, error: "Confira os horários: o fim deve ser depois do início." };
-
-    return { ok: true, duracaoMinutos };
+  async function carregar() {
+    setLoading(true);
+    try {
+      const data = await listParadas();
+      setParadas(data.map(mapApiToUi));
+      setErroCarregamento("");
+    } catch (e) {
+      setErroCarregamento(e.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function addParada({ motivo, horaInicio, horaFim }) {
-    const result = validar({ motivo, horaInicio, horaFim });
-    if (!result.ok) return result;
+  useEffect(() => {
+    carregar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    const turno = getTurnoPorHorario(horaInicio) || turnoAtivo;
-
-    setParadas((prev) => [
-      {
-        id: Date.now(),
-        motivo: motivo.trim(),
-        horaInicio,
-        horaFim,
-        duracaoMinutos: result.duracaoMinutos,
-        turno,
-        data: new Date(),
-      },
-      ...prev,
-    ]);
-
-    return { ok: true };
+  async function addParada(form) {
+    try {
+      const created = await createParada({ ...toApiPayload(form), turnoAtivo });
+      setParadas((prev) => [mapApiToUi(created), ...prev]);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
-  function updateParada(id, { motivo, horaInicio, horaFim }) {
-    const result = validar({ motivo, horaInicio, horaFim });
-    if (!result.ok) return result;
-
-    const turno = getTurnoPorHorario(horaInicio) || turnoAtivo;
-
-    setParadas((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? { ...p, motivo: motivo.trim(), horaInicio, horaFim, duracaoMinutos: result.duracaoMinutos, turno }
-          : p
-      )
-    );
-
-    return { ok: true };
+  async function updateParadaFn(id, form) {
+    try {
+      const updated = await updateParada(id, { ...toApiPayload(form), turnoAtivo });
+      setParadas((prev) => prev.map((p) => (p.id === id ? mapApiToUi(updated) : p)));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
-  function removeParada(id) {
-    setParadas((prev) => prev.filter((p) => p.id !== id));
+  async function removeParadaFn(id) {
+    try {
+      await removeParada(id);
+      setParadas((prev) => prev.filter((p) => p.id !== id));
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
   }
 
-  return { paradas, addParada, updateParada, removeParada };
+  return {
+    paradas,
+    addParada,
+    updateParada: updateParadaFn,
+    removeParada: removeParadaFn,
+    loading,
+    erroCarregamento,
+  };
 }

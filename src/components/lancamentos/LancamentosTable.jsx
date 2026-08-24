@@ -53,8 +53,8 @@ export function LancamentosTable({ entries, onUpdate, onRemove, titulo = "Lança
     if (editError) setEditError("");
   }
 
-  function saveEdit(id) {
-    const result = onUpdate(id, editForm);
+  async function saveEdit(id) {
+    const result = await onUpdate(id, editForm);
     if (!result.ok) {
       setEditError(result.error);
       return;
@@ -69,7 +69,7 @@ export function LancamentosTable({ entries, onUpdate, onRemove, titulo = "Lança
         ? `O setup nas barras ${entry.barraInicial}–${entry.barraFinal} será removido. Essa ação não pode ser desfeita.`
         : `O lançamento de ${entry.peca} (lote ${entry.lote}) será removido. Essa ação não pode ser desfeita.`,
     });
-    if (ok) onRemove(entry.id);
+    if (ok) await onRemove(entry.id);
   }
 
   // Prévia do total enquanto edita, pra dar feedback imediato antes de salvar.

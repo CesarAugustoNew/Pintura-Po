@@ -1,6 +1,7 @@
 package com.delga.pinturapo.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,8 +26,13 @@ public class Lancamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Sem o @JsonProperty explícito, o Lombok gera o getter isSetup() e o
+    // Jackson (que só olha pro nome do getter) tira o prefixo "is" na hora
+    // de serializar, virando "setup" no JSON — só que o front-end espera
+    // exatamente "isSetup". Esta anotação fixa o nome do campo no JSON.
     @Builder.Default
     @Column(nullable = false)
+    @JsonProperty("isSetup")
     private boolean isSetup = false;
 
     @Column(nullable = false, length = 60)

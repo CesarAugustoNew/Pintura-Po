@@ -35,8 +35,8 @@ export function SobrasTable({ sobras, onUpdate, onRemove }) {
     if (editError) setEditError("");
   }
 
-  function saveEdit(id) {
-    const result = onUpdate(id, editForm);
+  async function saveEdit(id) {
+    const result = await onUpdate(id, editForm);
     if (!result.ok) {
       setEditError(result.error);
       return;
@@ -49,7 +49,7 @@ export function SobrasTable({ sobras, onUpdate, onRemove }) {
       title: "Remover sobra?",
       message: `A sobra de ${sobra.peca} será removida. Essa ação não pode ser desfeita.`,
     });
-    if (ok) onRemove(sobra.id);
+    if (ok) await onRemove(sobra.id);
   }
 
   return (
