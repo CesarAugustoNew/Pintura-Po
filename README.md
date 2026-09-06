@@ -5,14 +5,16 @@ Sistema Full Stack desenvolvido para o setor de Pintura da Grupo Delga, com o ob
 A aplicação possui um Front-end desenvolvido em React e um Back-end desenvolvido em Java com Spring Boot, utilizando PostgreSQL para persistência dos dados e autenticação baseada em JWT.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React + Vite">
-  <img src="https://img.shields.io/badge/Backend-Java%20%2B%20Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Java Spring Boot">
-  <img src="https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
-  <img src="https://img.shields.io/badge/Security-Spring%20Security%20%2B%20JWT-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white" alt="Spring Security JWT">
-  <img src="https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
-  <img src="https://img.shields.io/badge/Deploy%20Front-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
-  <img src="https://img.shields.io/badge/Deploy%20Back-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white" alt="Render">
+  <img src="https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React + Vite">
+  <img src="https://img.shields.io/badge/Backend-Java%20%2B%20Spring%20Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Java Spring Boot">
+  <img src="https://img.shields.io/badge/Database-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Security-Spring%20Security%20%2B%20JWT-6DB33F?style=flat-square&logo=springsecurity&logoColor=white" alt="Spring Security JWT">
+  <img src="https://img.shields.io/badge/Container-Docker-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/Deploy%20Front-Vercel-000000?style=flat-squaree&logo=vercel&logoColor=white" alt="Vercel">
+  <img src="https://img.shields.io/badge/Deploy%20Back-Render-46E3B7?style=flat-square&logo=render&logoColor=white" alt="Render">
 </p>
+
+[**🔗 Acessar a aplicação**](https://pintura-po.vercel.app/)
 
 ---
 
