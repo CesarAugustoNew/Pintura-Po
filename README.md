@@ -19,6 +19,26 @@ A aplicação possui um Front-end desenvolvido em React e um Back-end desenvolvi
 - Password: operador123      
 - OBS: (aguarde a api acordar)
 
+## Demonstração
+<img width="1529" height="945" alt="image" src="https://github.com/user-attachments/assets/549a5e06-38b9-459a-8d3d-9b648c4e50cd" />
+<br>
+<br>
+<img width="1491" height="843" alt="image" src="https://github.com/user-attachments/assets/429dbdaa-3eab-4bb0-a55e-a47e3d57aeb6" />
+<br>
+<br>
+<img width="1499" height="920" alt="image" src="https://github.com/user-attachments/assets/88429dbb-bbb1-43d7-a996-567024a72c2d" />
+<br>
+<br>
+<img width="1477" height="516" alt="image" src="https://github.com/user-attachments/assets/a40c049b-88fa-4b28-9cad-7cf91b9d680b" />
+<br>
+<br>
+<img width="1502" height="952" alt="image" src="https://github.com/user-attachments/assets/1048d9f6-b2af-4149-802f-0c12a0a6c6a2" />
+
+
+
+
+
+
 ---
 
 ## 🚀 Funcionalidades
