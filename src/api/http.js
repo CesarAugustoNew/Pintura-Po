@@ -46,8 +46,18 @@ export async function apiRequest(path, { method = "GET", body, ...options } = {}
   }
 
   if (response.status === 401) {
-    onUnauthorized();
-    throw new Error("Sessão expirada. Faça login novamente.");
+    // A rota de login também responde 401 quando o usuário/senha estão
+    // errados — nesse caso a mensagem da API ("Usuário ou senha
+    // inválidos.") já é específica e deve ser mostrada normalmente.
+    // Só tratamos como "sessão expirada" (e disparamos o logout
+    // automático) quando o 401 vem de uma chamada JÁ AUTENTICADA
+    // (ou seja, quando havia um token sendo enviado).
+    if (!path.startsWith("/api/auth/login")) {
+      onUnauthorized();
+      if (token) {
+        throw new Error("Sessão expirada. Faça login novamente.");
+      }
+    }
   }
 
   if (response.status === 204) return null;
