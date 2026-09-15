@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { LogOut, PaintBucket } from "lucide-react";
 import { FUROS_POR_BARRA } from "../../constants";
 import { formatDatePtBr } from "../../utils/date";
 import { useAuth } from "../../context/AuthContext";
@@ -10,7 +10,26 @@ export function Header({ today }) {
     <div className="ptk-header">
       <div>
         <div className="ptk-eyebrow">Setor de Pintura · Controle de Barras e Embalagem</div>
-        <h1 className="ptk-title">Grupo Delga</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div
+            style={{
+              width: "34px",
+              height: "34px",
+              borderRadius: "9px",
+              background: "var(--accent)",
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <PaintBucket size={18} />
+          </div>
+          <h1 className="ptk-title" style={{ margin: 0 }}>
+            Grupo Delga
+          </h1>
+        </div>
         <p className="ptk-sub">
           Cada barra tem {FUROS_POR_BARRA} furos. Registre o lote, quantas peças foram por barra e o
           intervalo de barras usado.

@@ -1,14 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap");
 
 :root {
-  --bg: #ffffff;
+  /* Fundo com leve tom azulado (em vez de branco puro) — sem isso, o
+     fundo da página e os painéis brancos ficavam idênticos e tudo
+     parecia "uma folha só", sem profundidade. */
+  --bg: #eef2fa;
   --panel: #ffffff;
-  --panel-2: #f4f2ec;
-  --line: #e2ddd1;
-  --accent: #d9822b;
-  --accent-2: #3f6b7a;
-  --text: #201e1a;
-  --muted: #756e5f;
+  --panel-2: #e2e9f6;
+  --line: #d7e0f0;
+  /* Azul Grupo Delga (mesma família de cor da tela de login) como
+     destaque principal do app; laranja/teal/roxo continuam só como
+     identificadores de turno, sem relação com a marca. */
+  --accent: #1c56d6;
+  --accent-2: #2e79e6;
+  --text: #1c2333;
+  --muted: #67707f;
   --danger: #b23b2a;
   --success: #4c7a45;
   --turno1: #d9822b;
@@ -142,7 +148,7 @@ svg {
 }
 .ptk-tab.active {
   background: var(--accent);
-  color: #1c1b18;
+  color: #fff;
 }
 
 /* Turno switcher */
@@ -393,7 +399,7 @@ svg {
 }
 .ptk-btn {
   background: var(--accent);
-  color: #1c1b18;
+  color: #fff;
   border: none;
   border-radius: 8px;
   padding: 10px 18px;
@@ -455,7 +461,7 @@ svg {
 .ptk-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(32, 30, 26, 0.45);
+  background: rgba(15, 23, 42, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -584,14 +590,14 @@ svg {
 }
 .ptk-priority-btn.is-priority.active {
   background: var(--accent);
-  color: #1c1b18;
+  color: #fff;
   border-color: var(--accent);
 }
 .ptk-priority-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(217, 130, 43, 0.14);
+  background: rgba(28, 86, 214, 0.12);
   color: var(--accent);
   border-radius: 6px;
   padding: 3px 8px;
@@ -608,7 +614,7 @@ svg {
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  background: rgba(217, 130, 43, 0.14);
+  background: rgba(28, 86, 214, 0.12);
   color: var(--accent);
 }
 
