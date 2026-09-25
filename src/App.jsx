@@ -5,10 +5,12 @@ import { TurnoSwitcher } from "./components/common/TurnoSwitcher";
 import { LancamentosTab } from "./components/lancamentos/LancamentosTab";
 import { OrdensTab } from "./components/ordens/OrdensTab";
 import { SobrasTab } from "./components/sobras/SobrasTab";
-import { CatalogoTab } from "./components/catalogo/CatalogoTab";
 import { ParadasTab } from "./components/paradas/ParadasTab";
 import { ConfirmDialogProvider } from "./components/common/ConfirmDialogProvider";
 import { LoginScreen } from "./components/auth/LoginScreen";
+import { ModuleHub } from "./components/hub/ModuleHub";
+import { CadastroPecasScreen } from "./components/catalogo/CadastroPecasScreen";
+import { EmBreveScreen } from "./components/placeholder/EmBreveScreen";
 import { useAuth } from "./context/AuthContext";
 import { useLancamentos } from "./hooks/useLancamentos";
 import { useOrdensProducao } from "./hooks/useOrdensProducao";
@@ -20,8 +22,11 @@ import { TURNO_TODOS } from "./constants";
 import "./styles/theme.css";
 import "./styles/catalogo.css";
 
-export default function App() {
-  const { isAuthenticated, initializing } = useAuth();
+// Módulos disponíveis a partir da tela pós-login. "pintura-po" é o
+// painel de produção que já existia; "catalogo" era uma aba de dentro
+// dele e virou módulo próprio; "ktl" e "gestao" ainda não têm
+// funcionalidade definida.
+function PinturaPoApp({ onTrocarModulo }) {
   const [activeTab, setActiveTab] = useState("lancamentos");
   const today = useMemo(() => new Date(), []);
 
@@ -33,31 +38,25 @@ export default function App() {
   const [turnoSelecionado, setTurnoSelecionado] = useState(() => getTurnoAtual());
   const turnoParaNovosRegistros = turnoSelecionado === TURNO_TODOS ? getTurnoAtual() : turnoSelecionado;
 
-  // Os hooks de estado ficam aqui, no componente raiz, que nunca é
-  // desmontado. Assim os dados de cada aba sobrevivem quando o usuário
-  // navega para outra aba e volta depois. Cada hook busca e sincroniza
-  // seus dados com a API automaticamente.
+  // Os hooks de estado ficam aqui, no componente raiz deste módulo,
+  // que não é desmontado ao trocar de aba. Assim os dados de cada aba
+  // sobrevivem quando o usuário navega para outra aba e volta depois.
   const lancamentos = useLancamentos(turnoParaNovosRegistros);
   const ordens = useOrdensProducao(lancamentos.entries, turnoParaNovosRegistros);
   const sobras = useSobras();
+  // O catálogo agora é seu próprio módulo, mas os outros três ainda
+  // precisam da lista de peças (pra mostrar cliente/composição etc.),
+  // então o hook continua sendo usado aqui também, só sem aba própria.
   const catalogo = useCatalogoPecas();
   const paradas = useParadas(turnoParaNovosRegistros);
 
   const mostraTurnoSwitcher = activeTab === "lancamentos" || activeTab === "ordens" || activeTab === "paradas";
 
-  if (initializing) {
-    return null;
-  }
-
-  if (!isAuthenticated) {
-    return <LoginScreen />;
-  }
-
   return (
     <div className="ptk-wrap">
       <div className="ptk-container">
         <ConfirmDialogProvider>
-          <Header today={today} />
+          <Header today={today} onTrocarModulo={onTrocarModulo} />
           <Tabs activeTab={activeTab} onChange={setActiveTab} />
 
           {mostraTurnoSwitcher && (
@@ -73,9 +72,6 @@ export default function App() {
           <div style={{ display: activeTab === "sobras" ? "contents" : "none" }}>
             <SobrasTab {...sobras} catalogoPecas={catalogo.pecas} />
           </div>
-          <div style={{ display: activeTab === "catalogo" ? "contents" : "none" }}>
-            <CatalogoTab {...catalogo} />
-          </div>
           <div style={{ display: activeTab === "paradas" ? "contents" : "none" }}>
             <ParadasTab {...paradas} turnoFiltro={turnoSelecionado} />
           </div>
@@ -83,4 +79,46 @@ export default function App() {
       </div>
     </div>
   );
+}
+
+function CadastroPecasModule({ onTrocarModulo }) {
+  const catalogo = useCatalogoPecas();
+  return <CadastroPecasScreen catalogo={catalogo} onTrocarModulo={onTrocarModulo} />;
+}
+
+export default function App() {
+  const { isAuthenticated, initializing } = useAuth();
+  const [modulo, setModulo] = useState(null);
+
+  if (initializing) {
+    return null;
+  }
+
+  if (!isAuthenticated) {
+    return <LoginScreen />;
+  }
+
+  if (modulo === null) {
+    return <ModuleHub onSelect={setModulo} />;
+  }
+
+  const voltarParaHub = () => setModulo(null);
+
+  if (modulo === "pintura-po") {
+    return <PinturaPoApp onTrocarModulo={voltarParaHub} />;
+  }
+
+  if (modulo === "catalogo") {
+    return <CadastroPecasModule onTrocarModulo={voltarParaHub} />;
+  }
+
+  if (modulo === "ktl") {
+    return <EmBreveScreen titulo="KTL" onTrocarModulo={voltarParaHub} />;
+  }
+
+  if (modulo === "gestao") {
+    return <EmBreveScreen titulo="Gestão" onTrocarModulo={voltarParaHub} />;
+  }
+
+  return <ModuleHub onSelect={setModulo} />;
 }

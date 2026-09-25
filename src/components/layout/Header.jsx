@@ -1,9 +1,9 @@
-import { LogOut, PaintBucket } from "lucide-react";
+import { ArrowLeftRight, LogOut, PaintBucket } from "lucide-react";
 import { FUROS_POR_BARRA } from "../../constants";
 import { formatDatePtBr } from "../../utils/date";
 import { useAuth } from "../../context/AuthContext";
 
-export function Header({ today }) {
+export function Header({ today, subtitulo, onTrocarModulo }) {
   const { user, logout } = useAuth();
 
   return (
@@ -31,8 +31,12 @@ export function Header({ today }) {
           </h1>
         </div>
         <p className="ptk-sub">
-          Cada barra tem {FUROS_POR_BARRA} furos. Registre o lote, quantas peças foram por barra e o
-          intervalo de barras usado.
+          {subtitulo || (
+            <>
+              Cada barra tem {FUROS_POR_BARRA} furos. Registre o lote, quantas peças foram por barra e
+              o intervalo de barras usado.
+            </>
+          )}
         </p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
@@ -43,6 +47,16 @@ export function Header({ today }) {
               {user.role === "ADMIN" ? "Administrador" : "Operador"}
             </div>
           </div>
+        )}
+        {onTrocarModulo && (
+          <button
+            className="ptk-btn-secondary"
+            onClick={onTrocarModulo}
+            title="Trocar módulo"
+            style={{ display: "flex", alignItems: "center", gap: "6px" }}
+          >
+            <ArrowLeftRight size={14} /> Módulos
+          </button>
         )}
         <button
           className="ptk-btn-secondary"
