@@ -19,9 +19,9 @@ const MODULOS = [
   {
     id: "gestao",
     label: "Gestão",
-    descricao: "Em breve.",
+    descricao: "Relatórios de resultado dos turnos, filtrados por dia, mês ou semestre.",
     icon: BarChart3,
-    disponivel: false,
+    disponivel: true,
   },
   {
     id: "catalogo",
