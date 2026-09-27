@@ -11,6 +11,7 @@ import { LoginScreen } from "./components/auth/LoginScreen";
 import { ModuleHub } from "./components/hub/ModuleHub";
 import { CadastroPecasScreen } from "./components/catalogo/CadastroPecasScreen";
 import { EmBreveScreen } from "./components/placeholder/EmBreveScreen";
+import { GestaoScreen } from "./components/gestao/GestaoScreen";
 import { useAuth } from "./context/AuthContext";
 import { useLancamentos } from "./hooks/useLancamentos";
 import { useOrdensProducao } from "./hooks/useOrdensProducao";
@@ -117,7 +118,7 @@ export default function App() {
   }
 
   if (modulo === "gestao") {
-    return <EmBreveScreen titulo="Gestão" onTrocarModulo={voltarParaHub} />;
+    return <GestaoScreen onTrocarModulo={voltarParaHub} />;
   }
 
   return <ModuleHub onSelect={setModulo} />;
