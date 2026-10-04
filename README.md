@@ -20,20 +20,15 @@ A aplicação possui um Front-end desenvolvido em React e um Back-end desenvolvi
 - OBS: (aguarde a api acordar)
 
 ## Demonstração
-<img width="1529" height="945" alt="image" src="https://github.com/user-attachments/assets/549a5e06-38b9-459a-8d3d-9b648c4e50cd" />
-<br>
-<br>
-<img width="1491" height="843" alt="image" src="https://github.com/user-attachments/assets/429dbdaa-3eab-4bb0-a55e-a47e3d57aeb6" />
-<br>
-<br>
-<img width="1499" height="920" alt="image" src="https://github.com/user-attachments/assets/88429dbb-bbb1-43d7-a996-567024a72c2d" />
-<br>
-<br>
-<img width="1477" height="516" alt="image" src="https://github.com/user-attachments/assets/a40c049b-88fa-4b28-9cad-7cf91b9d680b" />
-<br>
-<br>
-<img width="1502" height="952" alt="image" src="https://github.com/user-attachments/assets/1048d9f6-b2af-4149-802f-0c12a0a6c6a2" />
-
+<img width="1915" height="954" alt="loginpintura" src="https://github.com/user-attachments/assets/ecb6eccc-9937-43a6-853d-1c75629f51a7" />
+<img width="1918" height="950" alt="menup" src="https://github.com/user-attachments/assets/ec92e2eb-353d-4891-8018-ec473fc7eb94" />
+<img width="1905" height="950" alt="lançap" src="https://github.com/user-attachments/assets/a53ca06d-16b7-4b9b-809b-6eba0b79e2d6" />
+<img width="1915" height="948" alt="op" src="https://github.com/user-attachments/assets/8d47a173-89e4-494c-9b65-0216646b1c13" />
+<img width="1899" height="953" alt="sobrasp" src="https://github.com/user-attachments/assets/ed87175c-6080-4897-801a-24bec273473a" />
+<img width="1905" height="949" alt="paradasp" src="https://github.com/user-attachments/assets/f2e2c165-8ef5-404f-bb5e-3d49284b0a13" />
+<img width="1908" height="950" alt="gestaop" src="https://github.com/user-attachments/assets/e90fd121-33bc-4221-99f3-449428e62760" />
+<img width="1912" height="949" alt="cadastrop" src="https://github.com/user-attachments/assets/a84297da-b541-4b1f-8b75-273558316166" />
+<img width="1916" height="949" alt="cadastrnadop" src="https://github.com/user-attachments/assets/02f18016-97c7-43ee-bec8-ac8fa4df12ab" />
 
 
 
