@@ -15,8 +15,8 @@ A aplicação possui um Front-end desenvolvido em React e um Back-end desenvolvi
 </p>
 
 [**🔗 Acessar a aplicação**](https://pintura-po.vercel.app/)    
-- Usuario: operador 
-- Password: operador123      
+- Usuario: admin 
+- Password: admin123      
 - OBS: (aguarde a api acordar)
 
 ## Demonstração
