@@ -14,7 +14,8 @@ A aplicação possui um Front-end desenvolvido em React e um Back-end desenvolvi
   <img src="https://img.shields.io/badge/Deploy%20Back-Render-46E3B7?style=flat-square&logo=render&logoColor=white" alt="Render">
 </p>
 
-[**🔗 Acessar a aplicação**](https://pintura-po.vercel.app/)    
+[**🔗 Aplicação publicada**](https://pintura-po.vercel.app/)) · [**⚙️ Documentação Swagger**](https://pintura-po.onrender.com/)
+
 - Usuario: admin 
 - Password: admin123      
 - OBS: (aguarde a api acordar)
