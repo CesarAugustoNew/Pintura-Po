@@ -10,7 +10,6 @@ import { ConfirmDialogProvider } from "./components/common/ConfirmDialogProvider
 import { LoginScreen } from "./components/auth/LoginScreen";
 import { ModuleHub } from "./components/hub/ModuleHub";
 import { CadastroPecasScreen } from "./components/catalogo/CadastroPecasScreen";
-import { EmBreveScreen } from "./components/placeholder/EmBreveScreen";
 import { GestaoScreen } from "./components/gestao/GestaoScreen";
 import { useAuth } from "./context/AuthContext";
 import { useLancamentos } from "./hooks/useLancamentos";
@@ -25,8 +24,7 @@ import "./styles/catalogo.css";
 
 // Módulos disponíveis a partir da tela pós-login. "pintura-po" é o
 // painel de produção que já existia; "catalogo" era uma aba de dentro
-// dele e virou módulo próprio; "ktl" e "gestao" ainda não têm
-// funcionalidade definida.
+// dele e virou módulo próprio; "gestao" traz os relatórios dos turnos.
 function PinturaPoApp({ onTrocarModulo }) {
   const [activeTab, setActiveTab] = useState("lancamentos");
   const today = useMemo(() => new Date(), []);
@@ -111,10 +109,6 @@ export default function App() {
 
   if (modulo === "catalogo") {
     return <CadastroPecasModule onTrocarModulo={voltarParaHub} />;
-  }
-
-  if (modulo === "ktl") {
-    return <EmBreveScreen titulo="KTL" onTrocarModulo={voltarParaHub} />;
   }
 
   if (modulo === "gestao") {

@@ -1,4 +1,4 @@
-import { PaintBucket, Droplets, BarChart3, BookOpen, LogOut, ArrowRight } from "lucide-react";
+import { PaintBucket, BarChart3, BookOpen, LogOut, ArrowRight } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 const MODULOS = [
@@ -8,13 +8,6 @@ const MODULOS = [
     descricao: "Lançamentos, ordens de produção, sobras e paradas do setor de pintura.",
     icon: PaintBucket,
     disponivel: true,
-  },
-  {
-    id: "ktl",
-    label: "KTL",
-    descricao: "Em breve.",
-    icon: Droplets,
-    disponivel: false,
   },
   {
     id: "gestao",
